@@ -4,18 +4,14 @@ import sqlite3
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
-from ..helpers import util
+from dbf2sql_sync.common import utils
 
 
-def fetch_all(query: str, parameters: Optional[Any] = None) -> List[Any]:
+def fetch_all(query: str) -> List[Any]:
     """Executes a query returning all rows in the found set"""
 
     with __get_cursor() as cursor:
-        if parameters is None:
-            cursor.execute(query)
-        else:
-            cursor.execute(query, [parameters])
-        return cursor.fetchall()
+        cursor.execute(query)
 
 
 def fetch_one(query: str, parameters: str) -> Any:
@@ -40,7 +36,7 @@ def fetch_none(query: str, parameters: Optional[Dict[str, Any]] = None) -> None:
 def __get_cursor() -> Iterator[sqlite3.Cursor]:
     """Allows working with database connection"""
 
-    connection: sqlite3.Connection = sqlite3.connect(util.SQL_DATABASE)
+    connection: sqlite3.Connection = sqlite3.connect(utils.SQL_DATABASE)
     cursor: sqlite3.Cursor = connection.cursor()
     try:
         yield cursor

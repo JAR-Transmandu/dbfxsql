@@ -2,10 +2,10 @@ import dbf
 from contextlib import contextmanager
 from typing import Any, Iterator
 
-from ..helpers import util
+from dbf2sql_sync.common import utils
 
 
-def fetch_none(query: str, parameters: dict[str, Any] | str | None = None) -> None:
+def fetch_none(query: str, parameters: dict[str, Any] | None = None) -> None:
     """Executes a query without returning values"""
 
     command: dict[str, Any] = {
@@ -20,7 +20,7 @@ def fetch_none(query: str, parameters: dict[str, Any] | str | None = None) -> No
         command[query](table, parameters) if parameters else command[query](table)
 
 
-def fetch_one(query: str) -> dict[str, Any]:
+def fetch_one(query: str) -> dict[str, Any] | None:
     """Executes a query returning one row in the found set"""
 
     with __get_table() as table:
@@ -28,10 +28,13 @@ def fetch_one(query: str) -> dict[str, Any]:
         fields = [field for field in table.field_names]
 
         # Save data in a list
-        values = table.query(query)[0]
+        values = table.query(query)
+
+        if not values:
+            return None
 
         # Save fields and data in a dictionary
-        record = dict(zip(fields, values))
+        record = dict(zip(fields, values[0]))
 
         return record
 
@@ -64,11 +67,13 @@ def __insert_record(table: dbf.Table, parameters: dict[str, Any]) -> None:
 
 
 def __update_record(table: dbf.Table, parameters: dict[str, Any]) -> None:
-    raise NotImplementedError
+    with table.query(f"SELECT * WHERE id == {parameters["id"]}")[0] as record:
+        for key, value in parameters.items():
+            record[key] = value
 
 
 def __delete_record(table: dbf.Table, parameters: str) -> None:
-    with table.query(parameters)[0] as record:
+    with table.query(f"SELECT * WHERE id == {parameters["id"]}")[0] as record:
         dbf.delete(record)
 
     table.pack()
@@ -83,7 +88,13 @@ def __drop_table(table: dbf.Table) -> None:
 def __get_table() -> Iterator[dbf.Table]:
     """Allows working with database table"""
 
-    table: dbf.Table = dbf.Table(util.DBF_DATABASE).open(dbf.READ_WRITE)
+    if utils.DBF_DATABASE.read_bytes():
+        table: dbf.Table = dbf.Table(utils.DBF_DATABASE.as_posix()).open(dbf.READ_WRITE)
+    else:
+        table: dbf.Table = dbf.Table(utils.DBF_DATABASE.as_posix(), "id N(1,0)").open(
+            dbf.READ_WRITE
+        )
+
     try:
         yield table
     finally:

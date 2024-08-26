@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-DBF_DATABASE = str(Path.cwd() / "dbf2sql_sync" / "database" / "users.dbf")
-SQL_DATABASE = str(Path.cwd() / "dbf2sql_sync" / "database" / "users.sql")
+DBF_DATABASE = Path.cwd() / "dbf2sql_sync" / "common" / "databases" / "users.dbf"
+SQL_DATABASE = Path.cwd() / "dbf2sql_sync" / "common" / "databases" / "users.sql"
 
 
 def reset_databases() -> None:

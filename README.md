@@ -33,16 +33,17 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 - [ ] Set up a cron job to sync data
 
 **Desirable:**
-- [ ] Upload to Github
+- [x] Upload to Github
 - [ ] Write a documentation
 - [x] Make some tests to validate the code
 - [x] Use parameters in tests
 - [ ] Indicate a folder path to find the databases
-- [ ] Handle dynamic fields between databases
-- [ ] Change arquitecture from MVC to Hexagonal 
+- [x] Handle dynamic fields between databases
+- [x] Change arquitecture from MVC to Hexagonal 
 - [ ] Apply CQRS patterns
 - [ ] Share as a library
 - [ ] Create a GUI to manage DBF and SQL
+- [ ] Stardardize dictionaries as I/O
 
 &nbsp;
 
