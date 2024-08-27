@@ -1,6 +1,5 @@
 # DBF ORM
 
-from prettytable import PrettyTable
 from dbf2sql_sync.functionalities import dbf_controller
 from typing import Any
 
@@ -19,17 +18,13 @@ def test_insert(record: dict[str, Any]) -> None:
 
 
 def test_lists() -> None:
-    users = dbf_controller.list_records()
-
-    __show_table(users)
+    dbf_controller.list_records()
 
 
 def test_details(record: dict[str, Any]) -> None:
     print(f"Select * FROM users WHERE id = {record["id"]};")
 
-    user = dbf_controller.detail_record(record)
-
-    __show_table([user])
+    dbf_controller.detail_record(record)
 
 
 def test_update(record: dict[str, Any]) -> None:
@@ -70,21 +65,6 @@ def test_reset(fields: str) -> None:
     print(f"CREATE TABLE users ({fields});")
 
     dbf_controller.reset_tables(fields)
-
-
-def __show_table(records: list[dict[str, Any]]) -> None:
-    table = PrettyTable()
-    table.field_names = records[0].keys() if records else []
-
-    for record in records:
-        table.add_row(
-            [
-                record[field] if isinstance(record[field], str) else str(record[field])
-                for field in table.field_names
-            ]
-        )
-
-    print(table, end="\n\n")
 
 
 if __name__ == "__main__":

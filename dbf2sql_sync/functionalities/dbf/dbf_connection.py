@@ -5,6 +5,28 @@ from typing import Any, Iterator
 from dbf2sql_sync.common import utils
 
 
+def fetch_all(query: str) -> list[dict[str, Any]]:
+    """Executes a query returning all rows in the found set"""
+
+    with __get_table() as table:
+        # If there are records
+        if values := table.query(query):
+            return [dict(zip(table.field_names, value)) for value in values]
+
+        return [{field: None for field in table.field_names}]
+
+
+def fetch_one(query: str) -> list[dict[str, Any]] | None:
+    """Executes a query returning one row in the found set"""
+
+    with __get_table() as table:
+        # If there are records
+        if values := table.query(query)[0]:
+            return [dict(zip(table.field_names, values))]
+
+        return []
+
+
 def fetch_none(query: str, parameters: dict[str, Any] | None = None) -> None:
     """Executes a query without returning values"""
 
@@ -18,44 +40,6 @@ def fetch_none(query: str, parameters: dict[str, Any] | None = None) -> None:
 
     with __get_table() as table:
         command[query](table, parameters) if parameters else command[query](table)
-
-
-def fetch_one(query: str) -> dict[str, Any] | None:
-    """Executes a query returning one row in the found set"""
-
-    with __get_table() as table:
-        # Save field names in a list
-        fields = [field for field in table.field_names]
-
-        # Save data in a list
-        values = table.query(query)
-
-        if not values:
-            return None
-
-        # Save fields and data in a dictionary
-        record = dict(zip(fields, values[0]))
-
-        return record
-
-
-def fetch_all(query: str) -> list[dict[str, Any]]:
-    """Executes a query returning all rows in the found set"""
-
-    with __get_table() as table:
-        # Save field names in a list
-        fields = [field for field in table.field_names]
-
-        # Save data of each record in a list
-        values = [value for value in table.query(query)]
-
-        if not values:
-            return [{field: None for field in fields}]
-
-        # Save fields and data in a dictionary for each record
-        records = [dict(zip(fields, value)) for value in values]
-
-        return records
 
 
 def __create_table(table: dbf.Table, parameters: str) -> None:

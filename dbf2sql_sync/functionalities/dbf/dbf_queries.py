@@ -23,16 +23,14 @@ def list_all() -> list[dict[str, Any]]:
 def details(data: dict[str, Any]) -> dict[str, Any]:
     query = f"SELECT * WHERE id == {data["id"]}"
 
-    record = dbf_connection.fetch_one(query)
+    if record := dbf_connection.fetch_one(query):
+        return record
 
-    if not record:
-        raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
-
-    return record
+    raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
 
 
 def update(data: dict[str, Any]) -> None:
-    if not __record_exists("id", data["id"]):
+    if not __record_exists("id", str(data["id"])):
         raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
 
     query = "UPDATE"
@@ -42,7 +40,7 @@ def update(data: dict[str, Any]) -> None:
 
 
 def delete(data: dict[str, Any]) -> None:
-    if not __record_exists("id", data["id"]):
+    if not __record_exists("id", str(data["id"])):
         raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
 
     query = "DELETE"

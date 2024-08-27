@@ -1,69 +1,67 @@
 """Database management for the user table"""
 
 from . import sql_connection
+from dbf2sql_sync.common import exceptions
 from typing import Any
 
 
-def insert(record: dict[str, Any]) -> None:
-    """Insert a new user into the database"""
+def insert(data: dict[str, Any]) -> None:
+    """Insert a new record into the database"""
 
-    # [keys] -> [:keys]
-    fields = ", ".join([f":{key.lower()}" for key in record.keys()])
+    # [key] -> [:key]
+    fields = ", ".join([f":{key.lower()}" for key in data.keys()])
 
     query = f"INSERT INTO users VALUES ({fields})"
-    parameters = {**record}
+    parameters = {**data}
 
     sql_connection.fetch_none(query, parameters)
 
 
-def update(record: dict[str, Any]) -> None:
-    """Update a user in the database"""
-
-    # [keys] -> [:keys]
-    # fields = ", ".join([f"{key} = :{key.lower()}" for key in record.keys()])
-
-    # query = f"UPDATE users SET {fields}"
-    # parameters = {**record}
-
-    # sql_connection.fetch_none(query, parameters)
-
-    raise NotImplementedError
-
-
 def list_all() -> list[dict[str, Any]]:
-    """List all users in the database"""
+    """List all record in the database"""
 
-    # query = "SELECT * FROM users"
+    query = "SELECT * FROM users"
 
-    # return sql_connection.fetch_all(query)
-
-    raise NotImplementedError
+    return sql_connection.fetch_all(query)
 
 
-def details(record: dict[str, Any]) -> dict[str, Any]:
-    """Get detailed information about a user"""
+def details(data: dict[str, Any]) -> dict[str, Any]:
+    """Get detailed information about a record"""
 
-    # query = "SELECT * FROM users WHERE name = ?"
-    # parameters = record["name"]
+    query = f"SELECT * FROM users WHERE id = {data["id"]}"
 
-    # return sql_connection.fetch_one(query, parameters)
+    if record := sql_connection.fetch_one(query):
+        return record
 
-    raise NotImplementedError
+    raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
 
 
-def delete(record: dict[str, Any]) -> None:
-    """Delete a user from the database"""
+def update(data: dict[str, Any]) -> None:
+    """Update a record in the database"""
+    if not __record_exists("id", str(data["id"])):
+        raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
 
-    # query = "DELETE FROM users WHERE name = ?"
-    # parameters = record["name"]
+    # [key] -> [key = :key]
+    fields = ", ".join([f"{key} = :{key.lower()}" for key in data.keys()])
 
-    # sql_connection.fetch_none(query, parameters)
+    query = f"UPDATE users SET {fields} WHERE id = {data["id"]}"
+    parameters = {**data}
 
-    raise NotImplementedError
+    sql_connection.fetch_none(query, parameters)
+
+
+def delete(data: dict[str, Any]) -> None:
+    """Delete a record from the database"""
+    if not __record_exists("id", str(data["id"])):
+        raise exceptions.RecordNotFound(f"No record with id: {data["id"]}")
+
+    query = f"DELETE FROM users WHERE id = {data["id"]}"
+
+    sql_connection.fetch_none(query)
 
 
 def reset(fields: str) -> None:
-    """Re-create the user table, if it already exists, delete it"""
+    """Re-create the record table, if it already exists, delete it"""
 
     query = "DROP TABLE IF EXISTS users"
     sql_connection.fetch_none(query)
@@ -73,12 +71,9 @@ def reset(fields: str) -> None:
     sql_connection.fetch_none(query)
 
 
-def __user_exists(field: str, value: str) -> bool:
+def __record_exists(field: str, value: str) -> bool:
     """Check if a parameter exists"""
 
-    query = f"SELECT oid, name from password WHERE {field}=?"
-    parameters = value
+    query = f"SELECT {field} FROM users WHERE {field}={value}"
 
-    record = sql_connection.fetch_one(query, parameters)
-
-    return bool(record)
+    return bool(sql_connection.fetch_one(query))

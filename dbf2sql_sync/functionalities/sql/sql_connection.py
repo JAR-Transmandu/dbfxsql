@@ -7,29 +7,43 @@ from typing import Any, Dict, Iterator, List, Optional
 from dbf2sql_sync.common import utils
 
 
-def fetch_all(query: str) -> List[Any]:
+def fetch_all(query: str) -> List[dict[str, Any]]:
     """Executes a query returning all rows in the found set"""
 
     with __get_cursor() as cursor:
         cursor.execute(query)
 
+        # Save field names in a list
+        fields = [description[0] for description in cursor.description]
 
-def fetch_one(query: str, parameters: str) -> Any:
+        # If there are rows
+        if rows := cursor.fetchall():
+            return [dict(zip(fields, row)) for row in rows]
+
+        return [{field: None for field in fields}]
+
+
+def fetch_one(query: str) -> list[dict[str, Any]] | None:
     """Executes a query returning one row in the found set"""
 
     with __get_cursor() as cursor:
-        cursor.execute(query, [parameters])
-        return cursor.fetchone()
+        cursor.execute(query)
+
+        # Save field names in a list
+        fields = [description[0] for description in cursor.description]
+
+        # If there are row
+        if row := cursor.fetchone():
+            return [dict(zip(fields, row))]
+
+        return [{field: None for field in fields}]
 
 
 def fetch_none(query: str, parameters: Optional[Dict[str, Any]] = None) -> None:
     """Executes a query without returning values"""
 
     with __get_cursor() as cursor:
-        if parameters is None:
-            cursor.execute(query)
-        else:
-            cursor.execute(query, parameters)
+        cursor.execute(query, parameters) if parameters else cursor.execute(query)
 
 
 @contextmanager

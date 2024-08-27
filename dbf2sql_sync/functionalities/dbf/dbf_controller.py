@@ -1,4 +1,5 @@
 from . import dbf_queries
+from dbf2sql_sync.common import utils
 from typing import Any
 
 
@@ -11,11 +12,17 @@ def update_record(data: dict[str, Any]) -> None:
 
 
 def list_records() -> list[dict[str, Any]]:
-    return dbf_queries.list_all()
+    records = utils.format_dbf(dbf_queries.list_all())
+    utils.show_table(records)
+
+    return records
 
 
-def detail_record(data: dict[str, Any]) -> dict[str, Any]:
-    return dbf_queries.details(data)
+def detail_record(data: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    records = utils.format_dbf(dbf_queries.details(data))
+    utils.show_table(records)
+
+    return records
 
 
 def delete_record(data: dict[str, Any]) -> None:
