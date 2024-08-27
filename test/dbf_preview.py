@@ -1,6 +1,7 @@
 # DBF ORM
 
 from dbf2sql_sync.functionalities import dbf_controller
+from dbf2sql_sync.common import utils
 from typing import Any
 
 
@@ -18,13 +19,13 @@ def test_insert(record: dict[str, Any]) -> None:
 
 
 def test_lists() -> None:
-    dbf_controller.list_records()
+    utils.show_table(dbf_controller.list_records())
 
 
 def test_details(record: dict[str, Any]) -> None:
     print(f"Select * FROM users WHERE id = {record["id"]};")
 
-    dbf_controller.detail_record(record)
+    utils.show_table(dbf_controller.detail_record(record))
 
 
 def test_update(record: dict[str, Any]) -> None:
@@ -68,7 +69,7 @@ def test_reset(fields: str) -> None:
 
 
 if __name__ == "__main__":
-    print("\nRunning tests...", end="\n\n")
+    print("\nRunning DBF tests...", end="\n\n")
 
     users_dict = [
         {"id": 1, "name": "j4breu", "password": "qwerty"},
@@ -78,7 +79,7 @@ if __name__ == "__main__":
 
     edit_user = {"id": 2, "name": "JAR", "password": "idk"}
 
-    test_reset("ID N(20,0); name C(20); password C(20)")
+    test_reset("id N(20,0); name C(20); password C(20)")
     test_lists()
 
     for user in users_dict:
@@ -94,4 +95,4 @@ if __name__ == "__main__":
     test_delete({**users_dict[0]})
     test_lists()
 
-    print("Done!")
+    print("DBF tests done!")

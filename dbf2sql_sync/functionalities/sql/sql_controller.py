@@ -1,5 +1,4 @@
 from . import sql_queries
-from dbf2sql_sync.common import utils
 from typing import Any
 
 
@@ -8,15 +7,11 @@ def insert_record(record: dict[str, Any]) -> None:
 
 
 def list_records() -> list[dict[str, Any]]:
-    utils.show_table(records := sql_queries.list_all())
-
-    return records
+    return sql_queries.list_all()
 
 
 def detail_record(record: dict[str, Any]) -> dict[str, Any]:
-    utils.show_table(record := sql_queries.details(record))
-
-    return record
+    return sql_queries.details(record)
 
 
 def update_record(record: dict[str, Any]) -> None:

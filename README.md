@@ -27,16 +27,18 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 **Required:**
 - [x] Create a CRUD to handle DBF and SQL
 - [x] Make a CLI to manage DBF and SQL
-- [ ] Transfer data between DBF and SQL
+- [x] Transfer data between DBF and SQL
 - [ ] Change detection in folders/files
 - [ ] Compare DB with replicas to sync specific fields
 - [ ] Set up a cron job to sync data
 
 **Desirable:**
 - [x] Upload to Github
+- [ ] Move from Sqlite to MSQL server
 - [ ] Write a documentation
 - [x] Make some tests to validate the code
 - [x] Use parameters in tests
+- [ ] Create proper test (not previews)
 - [ ] Indicate a folder path to find the databases
 - [x] Handle dynamic fields between databases
 - [x] Change arquitecture from MVC to Hexagonal 

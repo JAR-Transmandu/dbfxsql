@@ -1,5 +1,6 @@
 # SQL ORM
 from dbf2sql_sync.functionalities import sql_controller
+from dbf2sql_sync.common import utils
 from typing import Any
 
 
@@ -17,13 +18,13 @@ def test_insert(record: dict[str, Any]) -> None:
 
 
 def test_lists() -> None:
-    sql_controller.list_records()
+    utils.show_table(sql_controller.list_records())
 
 
 def test_details(record: dict[str, Any]) -> None:
     print(f"Select * FROM users WHERE id = {record["id"]};")
 
-    sql_controller.detail_record(record)
+    utils.show_table(sql_controller.detail_record(record))
 
 
 def test_update(record: dict[str, Any]) -> None:
@@ -67,7 +68,7 @@ def test_reset(fields: str) -> None:
 
 
 if __name__ == "__main__":
-    print("\nRunning tests...", end="\n\n")
+    print("\nRunning SQL tests...", end="\n\n")
 
     users_dict = [
         {"id": 1, "name": "j4breu", "password": "qwerty"},
@@ -92,4 +93,4 @@ if __name__ == "__main__":
     test_delete({**users_dict[0]})
     test_lists()
 
-    print("Done!")
+    print("SQL tests done!")
