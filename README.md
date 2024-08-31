@@ -34,18 +34,22 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 
 **Desirable:**
 - [x] Upload to Github
-- [ ] Move from Sqlite to MSQL server
-- [ ] Write a documentation
 - [x] Make some tests to validate the code
 - [x] Use parameters in tests
-- [ ] Create proper test (not previews)
-- [ ] Indicate a folder path to find the databases
 - [x] Handle dynamic fields between databases
 - [x] Change arquitecture from MVC to Hexagonal 
+- [ ] Assign the proper type to the values
+- [ ] Send parameters into the DBF selects
+- [ ] Send the location into the queries
+- [ ] Indicate a folder path to find the databases
+- [ ] Create proper test (not previews)
+- [ ] Add logger to manage logs
+- [ ] Move from Sqlite to MSQL server
+- [ ] Stardardize dictionaries as I/O
+- [ ] Write a documentation
 - [ ] Apply CQRS patterns
 - [ ] Share as a library
 - [ ] Create a GUI to manage DBF and SQL
-- [ ] Stardardize dictionaries as I/O
 
 &nbsp;
 

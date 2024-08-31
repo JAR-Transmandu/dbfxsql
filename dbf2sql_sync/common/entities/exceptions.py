@@ -1,8 +1,9 @@
 """ "Structures oriented to the transmission of custom errors"""
 
-class RecordNotFound(Exception):
+
+class FileNotFound(Exception):
     pass
 
 
-class RecordNotValid(Exception):
+class RecordNotFound(Exception):
     pass

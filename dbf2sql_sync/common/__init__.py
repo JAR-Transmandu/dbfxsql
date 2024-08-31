@@ -1,2 +1,2 @@
-from .entities import exceptions
+from .entities import exceptions, models
 from .helpers import utils

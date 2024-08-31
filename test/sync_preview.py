@@ -36,4 +36,6 @@ def test_sql_to_dbf(fields: str) -> None:
 
 if __name__ == "__main__":
     test_dbf_to_sql("id int, name text, password text")
+
+    print("\n", "-" * 50, sep="")
     test_sql_to_dbf("id N(20,0); name C(20); password C(20)")

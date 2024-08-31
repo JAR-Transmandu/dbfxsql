@@ -5,22 +5,19 @@ from dbf2sql_sync.common import exceptions
 from typing import Any
 
 
-def insert(data: dict[str, Any]) -> None:
+def insert(filename: str, data: dict[str, Any]) -> None:
     query = "INSERT"
-    parameters = {**data}
 
-    dbf_connection.fetch_none(query, parameters)
-
-
-def list_all() -> list[dict[str, Any]]:
-    query = "SELECT *"
-
-    records = dbf_connection.fetch_all(query)
-
-    return records
+    dbf_connection.fetch_none(query, filename, parameters)
 
 
-def details(data: dict[str, Any]) -> dict[str, Any]:
+def list_all(table: str) -> list[dict[str, Any]]:
+    query = "SELECT"
+
+    return dbf_connection.fetch_all(query)
+
+
+def details(data: Data) -> Result:
     query = f"SELECT * WHERE id == {data["id"]}"
 
     if record := dbf_connection.fetch_one(query):
@@ -49,16 +46,11 @@ def delete(data: dict[str, Any]) -> None:
     dbf_connection.fetch_none(query, parameters)
 
 
+def drop_table(fields: str) -> None:
+    dbf_connection.fetch_none("DROP")
+
+
 def reset(fields: str) -> None:
     """Re-create the user table, if it already exists, delete it"""
 
-    dbf_connection.fetch_none("DROP")
     dbf_connection.fetch_none("CREATE", fields)
-
-
-def __record_exists(field: str, value: str) -> bool:
-    """Check if a parameter exists"""
-
-    query = f"SELECT * WHERE {field}=={value}"
-
-    return bool(dbf_connection.fetch_one(query))

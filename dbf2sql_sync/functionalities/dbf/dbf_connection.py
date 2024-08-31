@@ -5,81 +5,77 @@ from typing import Any, Iterator
 from dbf2sql_sync.common import utils
 
 
-def fetch_all(query: str) -> list[dict[str, Any]]:
-    """Executes a query returning all rows in the found set"""
+def insert(filename: str, record: dict[str, Any]) -> None:
+    with __get_table(filename) as table:
+        table.append(record)
 
-    with __get_table() as table:
+
+def update(filename: str, record: dict[str, Any], condition: str) -> None:
+    filter = f"SELECT * WHERE {condition}"
+
+    with __get_table(filename).query(filter) as rows:
+        for row in rows:
+            for key, value in record.items():
+                record[key] = value
+
+
+def list_all(filename: str) -> list[dict[str, Any]]:
+    """Executes a query returning all rows in the found set"""
+    filter = "SELECT *"
+
+    with __get_table(filename) as table:
         # If there are records
-        if values := table.query(query):
-            return [dict(zip(table.field_names, value)) for value in values]
+        if rows := table.query(filter):
+            return [dict(zip(table.field_names, row)) for row in rows]
 
         return [{field: None for field in table.field_names}]
 
 
-def fetch_one(query: str) -> list[dict[str, Any]] | None:
-    """Executes a query returning one row in the found set"""
+def detail(filename: str, condition: str) -> dict[str, Any] | None:
+    """Executes a query returning all rows in the found set"""
 
-    with __get_table() as table:
+    with __get_table(filename) as table:
         # If there are records
-        if values := table.query(query)[0]:
-            return [dict(zip(table.field_names, values))]
-
-        return []
+        if rows := table.query(f"SELECT * WHERE {condition}")[0]:
+            return dict(zip(table.field_names, rows))
 
 
-def fetch_none(query: str, parameters: dict[str, Any] | None = None) -> None:
-    """Executes a query without returning values"""
+def delete(filename: str, condition: str) -> None:
+    filter = f"SELECT * WHERE {condition}"
 
-    command: dict[str, Any] = {
-        "CREATE": __create_table,
-        "INSERT": __insert_record,
-        "UPDATE": __update_record,
-        "DELETE": __delete_record,
-        "DROP": __drop_table,
-    }
+    with __get_table(filename).query(filter) as rows:
+        for row in rows:
+            dbf.delete(row)
 
-    with __get_table() as table:
-        command[query](table, parameters) if parameters else command[query](table)
+        rows.pack()
 
 
-def __create_table(table: dbf.Table, parameters: str) -> None:
-    table.add_fields(parameters)
+def create(filename: str, fields: str) -> None:
+    with __get_table(filename) as table:
+        table.add_fields(fields)
 
 
-def __insert_record(table: dbf.Table, parameters: dict[str, Any]) -> None:
-    table.append(parameters)
-
-
-def __update_record(table: dbf.Table, parameters: dict[str, Any]) -> None:
-    with table.query(f"SELECT * WHERE id == {parameters["id"]}")[0] as record:
-        for key, value in parameters.items():
-            record[key] = value
-
-
-def __delete_record(table: dbf.Table, parameters: str) -> None:
-    with table.query(f"SELECT * WHERE id == {parameters["id"]}")[0] as record:
-        dbf.delete(record)
-
-    table.pack()
-
-
-def __drop_table(table: dbf.Table) -> None:
-    table.zap()
-    table.delete_fields(table.field_names)
+def drop(filename: str) -> None:
+    with __get_table(filename) as table:
+        table.zap()
+        table.delete_fields(table.field_names)
 
 
 @contextmanager
-def __get_table() -> Iterator[dbf.Table]:
+def __get_table(filename: str) -> Iterator[dbf.Table]:
     """Allows working with database table"""
 
+    filepath: str = str(utils.FOLDERPATH) + filename
+
     if utils.DBF_DATABASE.read_bytes():
-        table: dbf.Table = dbf.Table(utils.DBF_DATABASE.as_posix()).open(dbf.READ_WRITE)
+        table: dbf.Table = dbf.Table(filepath)
+
     else:
-        table: dbf.Table = dbf.Table(utils.DBF_DATABASE.as_posix(), "id N(1,0)").open(
-            dbf.READ_WRITE
-        )
+        table: dbf.Table = dbf.Table(filepath, "tmp N(1,0)")
 
     try:
+        table.open(dbf.READ_WRITE)
         yield table
+
     finally:
         table.close()
