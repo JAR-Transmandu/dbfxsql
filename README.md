@@ -1,4 +1,4 @@
-# DBF2SQL Sync
+# DBFxSQL
 
 
 ### ✨ Overview
@@ -9,7 +9,7 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 
 ### 🔌 Installation
 
-1. Clone he repository, `git clone https://github.com/j4breu/dbf2sql-sync.git`
+1. Clone he repository, `git clone https://github.com/j4breu/dbfxsql.git`
 2. Create a virtual environment, `python -m venv .venv`
 3. Activate the virtual environment, `source .venv/bin/activate`
 4. Install dependencies, `pip install -r requirements.txt`
