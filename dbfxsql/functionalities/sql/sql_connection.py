@@ -1,32 +1,30 @@
 """Communications with the SQL database"""
 
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, Dict, Iterator, List, Optional
-
-from dbf2sql_sync.common import utils
 
 
-def fetch_all(query: str) -> List[dict[str, Any]]:
+def fetch_all(filepath: str, query: str) -> list[dict[str, any]]:
     """Executes a query returning all rows in the found set"""
 
-    with __get_cursor() as cursor:
+    with __get_cursor(filepath) as cursor:
         cursor.execute(query)
 
         # Save field names in a list
-        fields = [description[0] for description in cursor.description]
+        fields: list[str] = [description[0] for description in cursor.description]
 
-        # If there are rows
-        if rows := cursor.fetchall():
-            return [dict(zip(fields, row)) for row in rows]
+        records: list[dict[str, any]] = [
+            dict(zip(fields, row)) for row in cursor.fetchall()
+        ]
 
-        return [{field: None for field in fields}]
+    return records if records else [{field: "" for field in fields}]
 
 
-def fetch_one(query: str) -> list[dict[str, Any]] | None:
+def fetch_one(filepath: str, query: str) -> list[dict[str, any]] | None:
     """Executes a query returning one row in the found set"""
 
-    with __get_cursor() as cursor:
+    with __get_cursor(filepath) as cursor:
         cursor.execute(query)
 
         # Save field names in a list
@@ -36,21 +34,21 @@ def fetch_one(query: str) -> list[dict[str, Any]] | None:
         if row := cursor.fetchone():
             return [dict(zip(fields, row))]
 
-        return [{field: None for field in fields}]
 
-
-def fetch_none(query: str, parameters: Optional[Dict[str, Any]] = None) -> None:
+def fetch_none(
+    filepath: str, query: str, parameters: dict[str, any] | None = None
+) -> None:
     """Executes a query without returning values"""
 
-    with __get_cursor() as cursor:
+    with __get_cursor(filepath) as cursor:
         cursor.execute(query, parameters) if parameters else cursor.execute(query)
 
 
 @contextmanager
-def __get_cursor() -> Iterator[sqlite3.Cursor]:
+def __get_cursor(filepath: str) -> Generator[sqlite3.Cursor]:
     """Allows working with database connection"""
 
-    connection: sqlite3.Connection = sqlite3.connect(utils.SQL_DATABASE)
+    connection: sqlite3.Connection = sqlite3.connect(filepath)
     cursor: sqlite3.Cursor = connection.cursor()
     try:
         yield cursor

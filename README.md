@@ -1,4 +1,4 @@
-# DBFxSQL
+# dbfxsql
 
 
 ### ✨ Overview
@@ -13,7 +13,7 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 2. Create a virtual environment, `python -m venv .venv`
 3. Activate the virtual environment, `source .venv/bin/activate`
 4. Install dependencies, `pip install -r requirements.txt`
-5. Run the app, `python run.py` or `python -m dbf2sql_sync`
+5. Run the app, `python run.py` or `python -m dbfxsql`
 
 &nbsp;
 
@@ -26,26 +26,32 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 
 **Required:**
 - [x] Create a CRUD to handle DBF and SQL
-- [x] Make a CLI to manage DBF and SQL
 - [x] Transfer data between DBF and SQL
-- [ ] Change detection in folders/files
-- [ ] Compare DB with replicas to sync specific fields
-- [ ] Set up a cron job to sync data
+- [x] Make a CLI to manage DBF and SQL
+- [x] Registry file changes in a pool
+- [ ] Compare records to sync specific fields
+- [x] Set up a cron job to sync data
 
 **Desirable:**
 - [x] Upload to Github
-- [x] Make some tests to validate the code
-- [x] Use parameters in tests
 - [x] Handle dynamic fields between databases
-- [x] Change arquitecture from MVC to Hexagonal 
-- [ ] Assign the proper type to the values
-- [ ] Send parameters into the DBF selects
-- [ ] Send the location into the queries
-- [ ] Indicate a folder path to find the databases
-- [ ] Create proper test (not previews)
-- [ ] Add logger to manage logs
+- [x] Send the location into the queries
+- [x] Handle dynamic parameters as input
+- [x] Assign the proper type to the values
+- [x] Allow add fields in DBF (incremental id)
+- [x] Get database folder paths from .env
+- [x] Change detection in folders/files
+- [x] Make a video to explain the project
+- [x] Use config file to delimiter databases/tables/fields
+- [ ] Standarize the input by file and tables
+- [ ] Sync tables before the sync (initialization)
+- [ ] Implement BEFORE triggers for SQL's table changes
+- [ ] Generate logs for exceptions and errors
+- [ ] Add a LIMIT option to the queries
+- [ ] Add a FIELDS option to filter the select queries
+- [ ] Make some tests to validate the code
+- [ ] Set paths in a interactive shell
 - [ ] Move from Sqlite to MSQL server
-- [ ] Stardardize dictionaries as I/O
 - [ ] Write a documentation
 - [ ] Apply CQRS patterns
 - [ ] Share as a library
