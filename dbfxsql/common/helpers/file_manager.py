@@ -1,18 +1,10 @@
 from pathlib import Path
 from decouple import config
 import tomllib
-from dbfxsql.common import constants
-
-
-def rewrite_pool() -> None:
-    if constants.POOL.exists():
-        constants.POOL.unlink()
-
-    constants.POOL.touch()
 
 
 def load_toml() -> dict:
-    filepath: Path = Path(config("STORAGE_FOLDERPATH")) / "config.toml"
+    filepath: Path = Path(config("CONFIG_FOLDERPATH")) / "config.toml"
 
     if not filepath.exists():
         filepath.touch()

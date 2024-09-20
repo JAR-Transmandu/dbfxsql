@@ -1,5 +1,5 @@
 from . import sql_queries
-from dbfxsql.common import file_manager, formatters, models, exceptions, utils
+from dbfxsql.common import file_manager, formatters, models, exceptions
 
 
 def create_database(db: str) -> None:
@@ -76,7 +76,6 @@ def read_records(
     else:
         records: list[dict[str, any]] = sql_queries.read(filepath, table)
 
-    utils.show_table(records)
     return records
 
 
@@ -122,12 +121,4 @@ def delete_records(db: str, table: str, condition: str) -> None:
 def __record_exists(filepath: str, table: str, filter: models.Filter) -> bool:
     records: list[dict[str, any]] = sql_queries.read(filepath, table, filter)
 
-    if records:
-        # filter fetch_all with condition
-        records_set = [{record for record in records.values()} for records in records]
-
-        # if records_set is empty then update records
-        if 1 == len(records_set) and {""} == records_set[0]:
-            records = []
-
-    return bool(records)
+    return bool(formatters.depurate_empty_tables(records))

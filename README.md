@@ -43,6 +43,10 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 - [x] Change detection in folders/files
 - [x] Make a video to explain the project
 - [x] Use config file to delimiter databases/tables/fields
+- [ ] Allow get specific fields from a SELECT query
+- [ ] Validate Key Error for an invalid field
+- [ ] Validate the length and all other similar names for types in DBF and SQL
+- [ ] Allow relations+2 tables in the config file
 - [ ] Standarize the input by file and tables
 - [ ] Sync tables before the sync (initialization)
 - [ ] Implement BEFORE triggers for SQL's table changes

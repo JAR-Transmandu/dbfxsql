@@ -1,6 +1,7 @@
 # DBF ORM
 
 from dbfxsql.functionalities import dbf_controller
+from dbfxsql.common import utils
 
 
 def test_create(table: str, fields: str) -> None:
@@ -28,12 +29,12 @@ def test_insert(table: str, fields: str, values: str) -> None:
 
 
 def test_read_all(table: str) -> None:
-    dbf_controller.read_records(table)
+    utils.show_table(dbf_controller.read_records(table))
 
 
 def test_read_with_condition(table: str, condition: str) -> None:
     print(f"SELECT * FROM {table} WHERE ({condition});")
-    dbf_controller.read_records(table, condition)
+    utils.show_table(dbf_controller.read_records(table, condition))
 
 
 def test_update(table: str, fields: str, values: str, condition: str) -> None:

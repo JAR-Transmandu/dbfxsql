@@ -177,8 +177,7 @@ def read(database: str | None, table: str, condition: tuple[str, str, str] | Non
     if not database:
         utils.show_table(dbf_controller.read_records(table, condition))
     else:
-        sql_controller.read_records(database, table, condition)
-        # utils.show_table(sql_controller.read_records(database, table, condition))
+        utils.show_table(sql_controller.read_records(database, table, condition))
 
 
 @cli.command()

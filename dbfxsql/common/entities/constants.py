@@ -3,7 +3,6 @@ import decimal
 from pathlib import Path
 from decouple import config
 
-POOL: Path = Path(config("STORAGE_FOLDERPATH")) / "pool.json"
 
 DBF: dict[str, any] = {
     "C": str,

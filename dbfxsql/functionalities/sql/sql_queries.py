@@ -24,7 +24,7 @@ def count(filepath: str, table: str) -> int:
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
-    query: str = f"SELECT COUNT(id) FROM {table}"
+    query: str = f"SELECT COUNT(1) FROM {table}"
     return sql_connection.fetch_one(filepath, query)
 
 
@@ -106,7 +106,7 @@ def fetch_types(filepath: str, table: str, fields: str) -> list[dict[str, str]]:
     types: list[str] = []
 
     for field in fields_list:
-        types.append(fields_types[field])
+        types.append(fields_types[field])  # if KeyError -> Invalid field
 
     return types
 
@@ -114,6 +114,6 @@ def fetch_types(filepath: str, table: str, fields: str) -> list[dict[str, str]]:
 def __table_exists(filepath: str, table: str) -> bool:
     """Check if a table exists"""
 
-    query = f"SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{table}'"
+    query = f"SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='{table}'"
 
-    return bool(sql_connection.fetch_one(filepath, query)[0]["count(*)"])
+    return bool(sql_connection.fetch_one(filepath, query)[0]["COUNT(1)"])

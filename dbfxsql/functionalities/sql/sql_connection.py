@@ -18,7 +18,7 @@ def fetch_all(filepath: str, query: str) -> list[dict[str, any]]:
             dict(zip(fields, row)) for row in cursor.fetchall()
         ]
 
-    return records if records else [{field: "" for field in fields}]
+    return records if records else [{field: None for field in fields}]
 
 
 def fetch_one(filepath: str, query: str) -> list[dict[str, any]] | None:

@@ -1,6 +1,7 @@
 # SQL ORM
 
 from dbfxsql.functionalities import sql_controller
+from dbfxsql.common import utils
 
 
 def create_database(database: str) -> None:
@@ -12,9 +13,9 @@ def test_create(database: str, table: str, fields: str) -> None:
     sql_controller.create_table(database, table, fields)
 
 
-def test_drop(database: str, table: str) -> None:
-    print(f"DROP TABLE {table};", end="\n\n")
-    sql_controller.drop_table(database, table)
+def test_drop(database: str) -> None:
+    print(f"DROP DATABASE {database};", end="\n\n")
+    sql_controller.drop_database(database)
 
 
 def test_insert(database: str, table: str, fields: str, values: str) -> None:
@@ -24,12 +25,12 @@ def test_insert(database: str, table: str, fields: str, values: str) -> None:
 
 
 def test_read_all(database: str, table: str) -> None:
-    sql_controller.read_records(database, table)
+    utils.show_table(sql_controller.read_records(database, table))
 
 
 def test_read_with_condition(database: str, table: str, condition: str) -> None:
     print(f"SELECT * FROM {table} WHERE ({condition});")
-    sql_controller.read_records(database, table, condition)
+    utils.show_table(sql_controller.read_records(database, table, condition))
 
 
 def test_update(
@@ -75,6 +76,6 @@ if __name__ == "__main__":
     test_delete("users", "users", "id == 1")
     test_read_all("users", "users")
 
-    test_drop("users", "users")
+    test_drop("users")
 
     print("SQL tests done!")

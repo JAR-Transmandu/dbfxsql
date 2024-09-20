@@ -84,7 +84,7 @@ def read_records(table: str, condition: str | None = None) -> list[dict[str, any
     if not records:
         raise exceptions.RecordNotFound(condition)
 
-    utils.show_table(records)
+    # utils.show_table(records)
     return records
 
 
@@ -136,6 +136,9 @@ def delete_records(table: str, condition: str) -> None:
         _, indexes = formatters.filter_records(records, filter, limit=1)
     else:
         _, indexes = formatters.filter_records(records, filter)
+
+    if not indexes:
+        raise exceptions.RecordNotFound(condition)
 
     # delete filtered records by their index
     dbf_queries.delete(filepath, indexes)
