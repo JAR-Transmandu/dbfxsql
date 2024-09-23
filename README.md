@@ -43,19 +43,23 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 - [x] Change detection in folders/files
 - [x] Make a video to explain the project
 - [x] Use config file to delimiter databases/tables/fields
-- [ ] Allow get specific fields from a SELECT query
-- [ ] Validate Key Error for an invalid field
-- [ ] Validate the length and all other similar names for types in DBF and SQL
-- [ ] Allow relations+2 tables in the config file
-- [ ] Standarize the input by file and tables
-- [ ] Sync tables before the sync (initialization)
+- [ ] Replace dictionaries with classes during the sync
+- [ ] Force a sync between SQL and DBF (read all tables)
+- [ ] Move from Sqlite to MSQL server
 - [ ] Implement BEFORE triggers for SQL's table changes
-- [ ] Generate logs for exceptions and errors
+- [ ] Set folders path via commands
+- [ ] Upload a file as config via commands
+- [ ] Validate the existents fields in DBF
+- [ ] Separate incremental logic from the add feature
 - [ ] Add a LIMIT option to the queries
 - [ ] Add a FIELDS option to filter the select queries
+- [ ] Sync tables before the sync (initialization)
+- [ ] Generate logs for exceptions and errors
+- [ ] Standarize the input by file and tables
+- [ ] Validate Key Error for an invalid field
+- [ ] Validate the length and all other similar names for types in DBF and SQL
+- [ ] Allow +2 relations tables in the config file
 - [ ] Make some tests to validate the code
-- [ ] Set paths in a interactive shell
-- [ ] Move from Sqlite to MSQL server
 - [ ] Write a documentation
 - [ ] Apply CQRS patterns
 - [ ] Share as a library

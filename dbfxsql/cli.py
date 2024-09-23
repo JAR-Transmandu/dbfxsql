@@ -27,8 +27,8 @@ def create(database: str, table: str, field: tuple[tuple[str, str], ...]) -> Non
     Examples:
     ----------
     - DBF TABLE => dbfxsql create -t users -f id N(20,0) -f name C(20)
-    - SQL DB    => dbfxsql create -db users
-    - SQL TABLE => dbfxsql create -db users -t users -f id "integer primary key" -f name text
+    - SQL DB    => dbfxsql create -db mydb
+    - SQL TABLE => dbfxsql create -db mydb -t users -f id "integer primary key" -f name text
     """
     # Errors
     if not (database or table):
@@ -67,8 +67,8 @@ def drop(database: str, table: str):
     Examples:
     ----------
     - DBF TABLE => dbfxsql drop -t users
-    - SQL DB    => dbfxsql drop -db users
-    - SQL TABLE => dbfxsql drop -db users -t users
+    - SQL DB    => dbfxsql drop -db mydb
+    - SQL TABLE => dbfxsql drop -db mydb -t users
     """
     # Errors
     if not (database or table):
@@ -140,7 +140,7 @@ def insert(
     Examples:
     ----------
     - DBF TABLE => dbfxsql insert -t users -f id 1 -f name John
-    - SQL TABLE => dbfxsql insert -db users -t users -f id 1 -f name John
+    - SQL TABLE => dbfxsql insert -db mydb -t users -f id 1 -f name John
     """
     # Handle input
     fields = ", ".join(f"{f[0]}" for f in field)
@@ -169,7 +169,7 @@ def read(database: str | None, table: str, condition: tuple[str, str, str] | Non
     Examples:
     ----------
     - DBF TABLE => dbfxsql read -t users -c id == 1
-    - SQL TABLE => dbfxsql read -db users -t users -c id == 1
+    - SQL TABLE => dbfxsql read -db mydb -t users -c id == 1
     """
     condition = f"{condition[0]} {condition[1]} {condition[2]}" if condition else None
 
@@ -211,7 +211,7 @@ def update(
     Examples:
     ----------
     - DBF TABLE => dbfxsql update -t users -f id 1 -f name John -c id == 1
-    - SQL TABLE => dbfxsql update -db users -t users -f id 1 -f name John -c id == 1
+    - SQL TABLE => dbfxsql update -db users -t mydb -f id 1 -f name John -c id == 1
     """
 
     # Handle input
@@ -244,7 +244,7 @@ def delete(database: str | None, table: str, condition: tuple[str, str, str]):
     Examples:
     ----------
     - DBF TABLE => dbfxsql delete -t users -c id == 1
-    - SQL TABLE => dbfxsql delete -db users -t users -c id == 1
+    - SQL TABLE => dbfxsql delete -db mydb -t users -c id == 1
     """
     condition = f"{condition[0]} {condition[1]} {condition[2]}" if condition else None
 
@@ -259,5 +259,8 @@ def delete(database: str | None, table: str, condition: tuple[str, str, str]):
 def sync():
     """
     Synchronize data between DBF and SQL databases.
+
+    This read a config.toml file with the necessary information to sync data
+    between DBF and SQL databases.
     """
     sync_controller.main()

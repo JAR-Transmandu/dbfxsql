@@ -81,7 +81,8 @@ def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
     # update
     for origin_record in origin["records"]:
         for destiny_record in destiny["records"]:
-            comparator(origin, destiny, origin_record, destiny_record)
+            if origin_record["id"] == destiny_record["id"]:
+                comparator(origin, destiny, origin_record, destiny_record)
 
             origin["records"].remove(origin_record)
             destiny["records"].remove(destiny_record)
@@ -98,14 +99,13 @@ def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
 def comparator(
     origin: dict, destiny: dict, origin_record: dict, destiny_record: dict
 ) -> None:
-    if origin_record["id"] == destiny_record["id"]:
-        for index, (origin_field, destiny_field) in enumerate(
-            zip(origin["fields"], destiny["fields"])
-        ):
-            if origin_record[origin_field] != destiny_record[destiny_field]:
-                origin["fields"].remove("id")
-                destiny["fields"].remove("id")
+    for index, (origin_field, destiny_field) in enumerate(
+        zip(origin["fields"], destiny["fields"])
+    ):
+        if origin_record[origin_field] != destiny_record[destiny_field]:
+            origin["fields"].remove("id")
+            destiny["fields"].remove("id")
 
-                sync_queries.update_record(destiny, origin, origin_record)
+            sync_queries.update_record(destiny, origin, origin_record)
 
-                return
+            return

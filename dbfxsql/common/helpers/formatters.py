@@ -81,10 +81,8 @@ def depurate_empty_tables(records: list[dict]) -> list:
     if not records:
         return records
 
-    records_set = [{record for record in records.values()} for records in records]
-
     # if records_set is empty then update records
-    if 1 == len(records_set) and not records_set[0]:
+    if [{""}] == [{record for record in records.values()} for records in records]:
         return []
 
     return records
