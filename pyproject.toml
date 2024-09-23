@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "dbfxsql"
 version = "0.1.0"
-description = "DBFxSQL is a CLI tool to manage databases or tables between SQL and DBF."
+description = "DBFxSQL is a CLI tool to manage data between DBF and SQL databases."
 authors = ["Joel Abreu <joelabreurojas@gmail.com>"]
 license = "MIT"
 readme = "README.md"

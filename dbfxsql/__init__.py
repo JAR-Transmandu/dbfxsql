@@ -10,4 +10,4 @@ from dbfxsql.common import models
     epilog="For more information, visit https://github.com/j4breu/dbfxsql",
 )
 def run():
-    pass
+    """DBFxSQL is a CLI tool to manage data between DBF and SQL databases."""

@@ -1,12 +1,16 @@
+import logging
 import json
+import asyncio
+import os
 from yaspin import yaspin
 from decouple import config
-from watchfiles import watch
-from pprint import pprint
-from contextlib import contextmanager
+from watchfiles import arun_process
 
 from . import sync_queries
-from dbfxsql.common import file_manager, models, formatters
+from dbfxsql.common import models, formatters, file_manager
+
+# silent the watchfiles logger
+logging.getLogger("watchfiles").setLevel(logging.ERROR)
 
 
 def main() -> None:
@@ -15,24 +19,27 @@ def main() -> None:
             spinner.text = "Initializing..."
             spinner.text = "Listening..."
 
-            with listener() as filename:
-                runner(filename)
+            asyncio.run(listener())
 
         except KeyboardInterrupt:
             spinner.ok("END")
 
 
-@contextmanager
-def listener() -> None:
-    dbf_folder: str = config("DBF_FOLDERPATH")
-    sql_folder: str = config("SQL_FOLDERPATH")
-    for changes in watch(dbf_folder, sql_folder, watch_filter=models.Watcher()):
-        filename: str = changes.pop()[-1]  # ignore the event, take the file name
+async def listener() -> None:
+    await arun_process(
+        config("DBF_FOLDERPATH"),
+        config("SQL_FOLDERPATH"),
+        target=runner,
+        watch_filter=models.Watcher(),
+    )
 
-        yield filename
 
+def runner() -> None:
+    filename: str = depurator()
 
-def runner(filename: str) -> None:
+    if not filename or filename.endswith(".sql"):
+        return
+
     relations: list[dict[str, list[str]]] = formatters.filter_relations(filename)
 
     if not relations:
@@ -44,6 +51,22 @@ def runner(filename: str) -> None:
         origin, destiny = sync_queries.parse_relation(relation, origin)
 
         operator(origin, destiny)
+
+
+def depurator() -> str:
+    changes: list[list[str]] = os.getenv("WATCHFILES_CHANGES")
+
+    if changes == "[]":
+        return
+
+    changes = json.loads(changes)
+
+    filepath: str = changes.pop()[-1]  # ignore the event, take the file name
+    name, extension = file_manager.decompose_file(filepath)
+
+    filename: str = f"{name}.{extension}"
+
+    return filename
 
 
 def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:

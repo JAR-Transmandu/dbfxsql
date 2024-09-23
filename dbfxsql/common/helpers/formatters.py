@@ -42,6 +42,9 @@ def parse_condition(condition: str) -> models.Filter:
     if "=" == filter.operator:
         filter.operator += "="
 
+    if isinstance(filter.value, str):
+        filter.value = f"'{filter.value}'"
+
     return filter
 
 
@@ -53,19 +56,23 @@ def filter_records(
     count: int = 0
 
     for index, record in enumerate(_records):
-        condition: str = f"'{record[filter.field]}'{filter.operator}"
+        condition: str = filter.operator
 
         # force SQL format - users should write ' with strings
         if isinstance(record[filter.field], str):
-            condition += f"'{filter.value}'"
+            condition = f"'{record[filter.field]}'{condition}{filter.value}"
         else:
-            condition += f"{filter.value}"
+            filter.value = filter.value.strip("'")
+            condition = f"{record[filter.field]}{condition}{filter.value}"
 
-        if eval(condition) and count != limit:
+        if eval(condition):
             records.append(record)
             indexes.append(index)
 
             count -= -1  # count++
+
+        if count == limit:
+            break
 
     return records, indexes
 
