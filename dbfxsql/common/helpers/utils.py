@@ -1,9 +1,9 @@
-"""Auxiliary tasks of the application"""
-
 from prettytable import PrettyTable
 
 
 def show_table(records: list[dict[str, any]]) -> None:
+    """Displays a list of records in a table format."""
+
     table = PrettyTable()
 
     table.field_names = records[0].keys() if records else []

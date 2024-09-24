@@ -1,75 +1,49 @@
-from dbfxsql.common import file_manager, formatters
-from dbfxsql.functionalities import dbf_controller, sql_controller
+from dbfxsql.common import formatters, file_manager
+from . import sync_connection
 
 
-def read_records(filename: str, table: str) -> dict:
-    if filename.endswith(".dbf"):
-        return dbf_controller.read_records(table)
-
-    database, _ = file_manager.decompose_file(filename)
-    return sql_controller.read_records(database, table)
-
-
-def parse_relation(relation: dict, data: list) -> dict:
-    origin: dict = {"file": "", "table": "", "fields": [], "records": []}
-    destiny: dict = {"file": "", "table": "", "fields": [], "records": []}
-
-    for (
-        index,
-        (file, table),
-    ) in enumerate(zip(relation["files"], relation["tables"])):
-        if file == data[0] and table == data[1]:
-            origin["file"] = file
-            origin["table"] = table
-            origin["fields"] = relation["fields"][index].split(", ")
-            origin["records"] = data[2][:]
-
-        else:
-            destiny["file"] = file
-            destiny["table"] = table
-            destiny["fields"] = relation["fields"][index].split(", ")
-            destiny["records"] = read_records(file, table)
-
-    return origin, destiny
-
-
-def update_record(destiny: dict, origin: dict, record: dict) -> None:
-    file: str = destiny["file"]
-    table: str = destiny["table"]
-    fields: str = ", ".join(destiny["fields"])
-    values: str = ", ".join([str(record[field]) for field in origin["fields"]])
-    condition: str = f"id == {record['id']}"
-
-    if file.endswith(".dbf"):
-        dbf_controller.update_records(table, fields, values, condition)
+def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
+    # no changes
+    if origin["records"] == destiny["records"]:
         return
 
-    database, _ = file_manager.decompose_file(file)
-    sql_controller.update_records(database, table, fields, values, condition)
+    # empty tables
+    origin["records"] = formatters.depurate_empty_tables(origin["records"])
+    destiny["records"] = formatters.depurate_empty_tables(destiny["records"])
+
+    print(f"\nOrigin: {origin["records"]}\nDestiny: {destiny["records"]}\n")
+
+    # update
+    for origin_record in origin["records"]:
+        for destiny_record in destiny["records"]:
+            if origin_record["id"] == destiny_record["id"]:
+                comparator(origin, destiny, origin_record, destiny_record)
+
+                origin["records"].remove(origin_record)
+                destiny["records"].remove(destiny_record)
+
+    # insert
+    for origin_record in origin["records"]:
+        print(f"Insert: {origin_record}")
+        sync_connection.insert_record(origin, destiny, origin_record)
+
+    # delete
+    for destiny_record in destiny["records"]:
+        print(f"Delete: {destiny_record}")
+        sync_queries.delete_record(destiny, destiny_record)
 
 
-def insert_record(origin: dict, destiny: dict, record: dict) -> None:
-    file: str = destiny["file"]
-    table: str = destiny["table"]
-    fields: str = ", ".join(destiny["fields"])
-    values: str = ", ".join([str(record[field]) for field in origin["fields"]])
+def comparator(
+    origin: dict, destiny: dict, origin_record: dict, destiny_record: dict
+) -> None:
+    for index, (origin_field, destiny_field) in enumerate(
+        zip(origin["fields"], destiny["fields"])
+    ):
+        if origin_record[origin_field] != destiny_record[destiny_field]:
+            origin["fields"].remove("id")
+            destiny["fields"].remove("id")
 
-    if file.endswith(".dbf"):
-        dbf_controller.insert_record(table, fields, values)
-        return
+            print(f"{origin_field} -> {destiny_field}")
+            sync_queries.update_record(destiny, origin, origin_record)
 
-    database, _ = file_manager.decompose_file(file)
-    sql_controller.insert_record(database, table, fields, values)
-
-
-def delete_record(destiny: dict, record: dict) -> None:
-    file: str = destiny["file"]
-    table: str = destiny["table"]
-    condition: str = f"id == {record['id']}"
-
-    if file.endswith(".dbf"):
-        dbf_controller.delete_records(table, condition)
-        return
-
-    database, _ = file_manager.decompose_file(file)
-    sql_controller.delete_records(database, table, condition)
+            return

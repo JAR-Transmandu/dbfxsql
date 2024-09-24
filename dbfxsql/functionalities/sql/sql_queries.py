@@ -21,6 +21,8 @@ def drop(filepath: str, table: str) -> None:
 
 
 def count(filepath: str, table: str) -> int:
+    """Counts the number of records in a SQL table."""
+
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
@@ -29,7 +31,6 @@ def count(filepath: str, table: str) -> int:
 
 
 def insert(filepath: str, table: str, record: dict[str, any]) -> None:
-    """Insert a new record into the database"""
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
@@ -43,10 +44,7 @@ def insert(filepath: str, table: str, record: dict[str, any]) -> None:
     sql_connection.fetch_none(filepath, query, parameters)
 
 
-def read(
-    filepath: str, table: str, filter: models.Filter | None = None
-) -> list[dict[str, any]]:
-    """List all record in the database"""
+def read(filepath: str, table: str, filter: models.Filter | None = None) -> list[dict]:
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
@@ -61,10 +59,7 @@ def read(
     return sql_connection.fetch_all(filepath, query)
 
 
-def update(
-    filepath: str, table: str, record: dict[str, any], filter: models.Filter
-) -> None:
-    """Update a record in the database"""
+def update(filepath: str, table: str, record: dict, filter: models.Filter) -> None:
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
@@ -78,7 +73,6 @@ def update(
 
 
 def delete(filepath: str, table: str, filter: models.Filter) -> None:
-    """Delete a record from the database"""
     if not __table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
@@ -88,7 +82,8 @@ def delete(filepath: str, table: str, filter: models.Filter) -> None:
 
 
 def fetch_types(filepath: str, table: str, fields: str) -> list[dict[str, str]]:
-    """Fetch the types of a table"""
+    """Fetches the types of specified fields in a SQL table."""
+
     fields_list = fields.lower().replace(", ", ",").split(",")
 
     fields = ", ".join([f"'{field}'" for field in fields_list])
@@ -112,8 +107,6 @@ def fetch_types(filepath: str, table: str, fields: str) -> list[dict[str, str]]:
 
 
 def __table_exists(filepath: str, table: str) -> bool:
-    """Check if a table exists"""
-
     query = f"SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='{table}'"
 
     return bool(sql_connection.fetch_one(filepath, query)[0]["COUNT(1)"])

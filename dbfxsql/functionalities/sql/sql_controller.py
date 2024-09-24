@@ -121,4 +121,4 @@ def delete_records(db: str, table: str, condition: str) -> None:
 def __record_exists(filepath: str, table: str, filter: models.Filter) -> bool:
     records: list[dict[str, any]] = sql_queries.read(filepath, table, filter)
 
-    return bool(formatters.depurate_empty_tables(records))
+    return bool(formatters.depurate_empty_records(records))

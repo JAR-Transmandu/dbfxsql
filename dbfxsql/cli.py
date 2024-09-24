@@ -1,4 +1,6 @@
 import click
+import asyncio
+from yaspin import yaspin
 
 from dbfxsql.functionalities import dbf_controller, sql_controller, sync_controller
 from dbfxsql.common import models, utils
@@ -26,7 +28,7 @@ def create(database: str, table: str, field: tuple[tuple[str, str], ...]) -> Non
     \b
     Examples:
     ----------
-    - DBF TABLE => dbfxsql create -t users -f id N(20,0) -f name C(20)
+    - DBF TABLE => dbfxsql create -t users -f id "N(20,0)" -f name "C(20)"
     - SQL DB    => dbfxsql create -db mydb
     - SQL TABLE => dbfxsql create -db mydb -t users -f id "integer primary key" -f name text
     """
@@ -263,4 +265,17 @@ def sync():
     This read a config.toml file with the necessary information to sync data
     between DBF and SQL databases.
     """
-    sync_controller.main()
+
+    with yaspin(color="cyan", timer=True) as spinner:
+        try:
+            spinner.text = "Initializing..."
+            sync_controller.init()
+
+            spinner.text = "Listening..."
+            sync_controller.runner()
+
+        except KeyboardInterrupt:
+            spinner.ok("END")
+
+        except Exception as error:
+            spinner.fail(f"ERROR: {error}")

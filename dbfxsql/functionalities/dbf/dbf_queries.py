@@ -1,5 +1,3 @@
-"""Database management for the table"""
-
 import dbf
 
 from .dbf_connection import get_table
@@ -17,6 +15,10 @@ def drop(filepath: str) -> None:
 
 
 def add(filepath: str, fields: str, increment: bool) -> None:
+    """
+    Adds new fields to an existing DBF table and optionally increments the ID field.
+    """
+
     with get_table(filepath) as table:
         table.add_fields(fields)
 
@@ -27,6 +29,8 @@ def add(filepath: str, fields: str, increment: bool) -> None:
 
 
 def count(filepath: str) -> int:
+    """Counts the number of records in a DBF table."""
+
     with get_table(filepath) as table:
         return table.field_count
 
@@ -65,6 +69,8 @@ def delete(filepath: str, indexes: list[int]) -> None:
 
 
 def fetch_types(filepath: str, fields: str) -> list[str]:
+    """Retrieves the types of specified fields in a DBF table."""
+
     fields_list: list[str] = fields.lower().replace(", ", ",").split(",")
     names: list[str] = []
     types: list[str] = []

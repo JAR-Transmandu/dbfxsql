@@ -1,15 +1,13 @@
 import datetime
 import decimal
-from pathlib import Path
-from decouple import config
 
 
 DBF: dict[str, any] = {
     "C": str,
     "D": datetime.date,
-    "N": decimal.Decimal,
+    "N": decimal.Decimal,  # Numeric
     "L": bool,
-    "M": str,
+    "M": str,  # Memo (long text)
     "F": float,
     "@": datetime.datetime,
 }
@@ -19,5 +17,5 @@ SQL: dict[str, any] = {
     "INTEGER": int,
     "REAL": float,
     "TEXT": str,
-    "BLOB": bytes,
+    "BLOB": bytes,  # Binary data
 }

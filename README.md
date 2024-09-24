@@ -3,68 +3,104 @@
 
 ### ✨ Overview
 
-This project aims to synchronize data between [DBF](https://en.wikipedia.org/wiki/DBF) (dBase) files and a [SQL](https://en.wikipedia.org/wiki/SQL) database. In order to do so, will provides a bi-directional data transfer mechanism, allowing to migrate data from DBF to SQL and vice versa.
+A tool that enables bi-directional data synchronization between [DBF](https://en.wikipedia.org/wiki/DBF) (dBase) files and a [SQL](https://en.wikipedia.org/wiki/SQL) databases. It facilitates seamless data migration from DBF to SQL and vice versa.
 
 &nbsp;
 
 ### 🔌 Installation
 
-1. Clone he repository, `git clone https://github.com/j4breu/dbfxsql.git`
-2. Create a virtual environment, `python -m venv .venv`
-3. Activate the virtual environment, `source .venv/bin/activate`
-4. Install dependencies, `pip install -r requirements.txt`
-5. Run the app, `python run.py` or `python -m dbfxsql`
+1. Clone he repository:
+
+```bash
+git clone https://github.com/j4breu/dbfxsql.git
+```
+
+2. Change to the project directory:
+
+```bash
+cd dbfxsql
+```
+
+3. Install Poetry (if not alredy installed)
+
+```bash
+pip install poetry
+```
+
+4. Install project dependencies:
+
+```bash
+poetry install
+```
+
+5. Run the application:
+
+```bash
+poetry run python run.py
+```
 
 &nbsp;
 
 ### 💻 Usage
 
+**Detailed Usage Instructions Coming Soon!**
+
+Comprehensive documentation with usage instructions and code examples will be available in a separate file shortly. Stay tuned!
+
+**Early Code Example:**
+
+This early version of the code demonstrates a basic interaction with the tool.
+
+[Link to Asciinema code example](https://asciinema.org/a/675516)
 
 &nbsp;
 
 ### 📝 Roadmap
 
 **Required:**
-- [x] Create a CRUD to handle DBF and SQL
-- [x] Transfer data between DBF and SQL
-- [x] Make a CLI to manage DBF and SQL
-- [x] Registry file changes in a pool
+- [x] CRUD operations for both DBF and SQL databases.
+- [x] Bi-directional data transfer between DBF and SQL.
+- [x] Command-Line Interface (CLI) for managing DBF and SQL tasks.
+- [x] Detecting changes in folders.
 - [ ] Compare records to sync specific fields
 - [x] Set up a cron job to sync data
 
-**Desirable:**
-- [x] Upload to Github
-- [x] Handle dynamic fields between databases
-- [x] Send the location into the queries
-- [x] Handle dynamic parameters as input
-- [x] Assign the proper type to the values
-- [x] Allow add fields in DBF (incremental id)
-- [x] Get database folder paths from .env
-- [x] Change detection in folders/files
-- [x] Make a video to explain the project
-- [x] Use config file to delimiter databases/tables/fields
-- [ ] Auto create a DB in the create command for SQL
-- [ ] Replace dictionaries with classes during the sync
-- [ ] Force a sync between SQL and DBF (read all tables)
-- [ ] Move from Sqlite to MSQL server
-- [ ] Implement BEFORE triggers for SQL's table changes
-- [ ] Set folders path via commands
-- [ ] Upload a file as config via commands
-- [ ] Validate the existents fields in DBF
-- [ ] Separate incremental logic from the add feature
-- [ ] Add a LIMIT option to the queries
-- [ ] Add a FIELDS option to filter the select queries
-- [ ] Sync tables before the sync (initialization)
-- [ ] Generate logs for exceptions and errors
-- [ ] Standarize the input by file and tables
-- [ ] Validate Key Error for an invalid field
-- [ ] Validate the length and all other similar names for types in DBF and SQL
-- [ ] Allow +2 relations tables in the config file
-- [ ] Make some tests to validate the code
-- [ ] Write a documentation
-- [ ] Apply CQRS patterns
-- [ ] Share as a library
-- [ ] Create a GUI to manage DBF and SQL
+<details>
+  <summary><strong>Desirable:</strong></summary>
+  <br>
+  <ul>
+      <li>[x] Uploading the project to GitHub.</li>
+      <li>[x] Handling dynamic fields between databases.</li>
+      <li>[x] Specifying database location in queries.</li>
+      <li>[x] Handling dynamic input parameters.</li>
+      <li>[x] Assigning proper data types to input values.</li>
+      <li>[x] Allowing adding fields in DBF (incremental ID support).</li>
+      <li>[x] Retrieving database folder paths from a `.env` file.</li>
+      <li>[x] Creating a project explainer video.</li>
+      <li>[x] Configuring database/table/field delimiters via a config file.</li>
+      <li>[ ] Automatic SQL database creation during SQL table creation.</li>
+      <li>[ ] Replace dictionaries with classes during synchronization.</li>
+      <li>[ ] Force SQL -> DBF "synchronization" (read all tables).</li>
+      <li>[ ] Support for other database systems beyond SQLite. (MSQL Server).</li>
+      <li>[ ] Implement BEFORE triggers for SQL table changes.</li>
+      <li>[ ] Allow setting folder paths via CLI commands.</li>
+      <li>[ ] Upload a configuration file via CLI commands.</li>
+      <li>[ ] Validate the existence of fields in the DBF.</li>
+      <li>[ ] Separate incremental logic from the "add" feature.</li>
+      <li>[ ] Add LIMIT and FIELDS options for filtering queries.</li>
+      <li>[ ] Perform table synchronization before initial data migration.</li>
+      <li>[ ] Generate logs for exceptions and errors.</li>
+      <li>[ ] Standardize input by file and tables.</li>
+      <li>[ ] Validate KeyErrors for invalid fields.</li>
+      <li>[ ] Validate type lengths and names for consistency between DBF and SQL.</li>
+      <li>[ ] Support for relationships between two or more tables in the config file.</li>
+      <li>[ ] Unit tests for code validation.</li>
+      <li>[ ] Comprehensive project documentation.</li>
+      <li>[ ] Implementation of CQRS (Command Query Responsibility Segregation) patterns.</li>
+      <li>[ ] Sharing as a Python library.</li>
+      <li>[ ] Development of a GUI for managing DBF and SQL.</li>
+  </ul>
+</details>
 
 &nbsp;
 
@@ -82,6 +118,6 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 
 ### ❤️  Gratitude
 
-Thanks to the following projects developing this project is possible:
+Special thanks to the following project for making this tool possible:
 
 - [ethanfurman/dbf](https://github.com/ethanfurman/dbf): pure python dbf reader/writer

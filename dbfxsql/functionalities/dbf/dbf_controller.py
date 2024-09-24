@@ -1,5 +1,5 @@
 from . import dbf_queries
-from dbfxsql.common import file_manager, formatters, models, exceptions, utils
+from dbfxsql.common import file_manager, formatters, models, exceptions
 
 
 def create_table(table: str, fields: str) -> None:
