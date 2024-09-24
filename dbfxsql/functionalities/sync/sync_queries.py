@@ -2,7 +2,17 @@ from . import sync_connection
 from dbfxsql.common import formatters
 
 
-def parse_relation(relation: dict, data: list) -> dict:
+def data_asdict(file: str, table: str) -> list:
+    data: dict = {
+        "file": file,
+        "table": table,
+        "records": sync_connection.read_records(file, table),
+    }
+
+    return data
+
+
+def parse_relation(relation: dict, modified_data: list) -> dict:
     """Parses a relation and returns the origin and destiny dictionaries."""
 
     origin: dict = {"file": "", "table": "", "fields": [], "records": []}
@@ -12,11 +22,11 @@ def parse_relation(relation: dict, data: list) -> dict:
         index,
         (file, table),
     ) in enumerate(zip(relation["files"], relation["tables"])):
-        if file == data[0] and table == data[1]:
+        if file == modified_data["file"] and table == modified_data["table"]:
             origin["file"] = file
             origin["table"] = table
             origin["fields"] = relation["fields"][index].split(", ")
-            origin["records"] = data[2][:]
+            origin["records"] = modified_data["records"][:]
 
         else:
             destiny["file"] = file
@@ -30,11 +40,14 @@ def parse_relation(relation: dict, data: list) -> dict:
 def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
     """Performs the synchronization process."""
 
-    origin["records"] = formatters.depurate_empty_tables(origin["records"])
-    destiny["records"] = formatters.depurate_empty_tables(destiny["records"])
+    origin["records"] = formatters.depurate_empty_records(origin["records"])
+    destiny["records"] = formatters.depurate_empty_records(destiny["records"])
 
     if origin["records"] == destiny["records"]:
         return
+
+    residual_origin: list = origin["records"][:]
+    residual_destiny: list = destiny["records"][:]
 
     # update matching records
     for origin_record in origin["records"]:
@@ -42,17 +55,18 @@ def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
             if origin_record["id"] == destiny_record["id"]:
                 comparator(origin, destiny, origin_record, destiny_record)
 
-                origin["records"].remove(origin_record)
-                destiny["records"].remove(destiny_record)
+                residual_origin.remove(origin_record)
+                residual_destiny.remove(destiny_record)
+                break
 
     # insert residual origin records
-    for origin_record in origin["records"]:
-        print(f"Insert: {origin_record}")
+    for origin_record in residual_origin:
+        print(f"Insert in {destiny["file"]}: {origin_record}")
         sync_connection.insert_record(origin, destiny, origin_record)
 
     # delete residual destiny records
-    for destiny_record in destiny["records"]:
-        print(f"Delete: {destiny_record}")
+    for destiny_record in residual_destiny:
+        print(f"Delete in {destiny["file"]}: {destiny_record}")
         sync_connection.delete_record(destiny, destiny_record)
 
 
@@ -68,7 +82,6 @@ def comparator(
             origin["fields"].remove("id")
             destiny["fields"].remove("id")
 
-            print(f"{origin_field} -> {destiny_field}")
             sync_connection.update_record(destiny, origin, origin_record)
 
-            return
+            break

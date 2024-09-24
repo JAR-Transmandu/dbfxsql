@@ -27,24 +27,24 @@ def runner() -> None:
     """Runs the synchronization process."""
 
     # get the modified file
-    modified_file: str = "usuarios.sql"  # formatters.get_modified_file()
+    modified_file: str = formatters.get_modified_file()
     if not modified_file:
         return
+
+    print(f"File modified: {modified_file}")
 
     # get the relations from the modified file
     relations: list[dict] = formatters.filter_relations(modified_file)
     if not relations:
         return
 
-    modified_data: dict = {
-        "file": modified_file,
-        "table": formatters.get_table(relations, modified_file),
-        "records": sync_queries.read_records(
-            modified_file, formatters.get_table(relations, modified_file)
-        ),
-    }
+    modified_tables: list[str] = formatters.get_tables(relations, modified_file)
 
-    # compare the modified data with each table relationed
-    for relation in relations:
-        origin, destiny = sync_queries.parse_relation(relation, modified_data)
-        sync_queries.operator(origin, destiny)
+    # read all tables of the modified file
+    for modified_table in modified_tables:
+        modified_data: dict = sync_queries.data_asdict(modified_file, modified_table)
+
+        # compare the modified data with each table relationed
+        for relation in relations:
+            origin, destiny = sync_queries.parse_relation(relation, modified_data)
+            sync_queries.operator(origin, destiny)

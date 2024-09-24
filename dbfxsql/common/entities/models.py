@@ -22,6 +22,11 @@ class Watcher(DefaultFilter):
     """Tracks file changes based on allowed extensions."""
 
     allowed_extensions: tuple[str] = (".dbf", ".sql")
+    ignored_dirs: tuple[str] = ("__pycache__",)  # Your custom ignored directories
+
+    def __init__(self):
+        super().__init__()  # Call the base class constructor
+        self.ignore_dirs = set(self.ignored_dirs)
 
     def __call__(self, change: Change, path: str) -> bool:
         """Filters file changes based on modification and extensions."""

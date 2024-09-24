@@ -116,15 +116,15 @@ def get_modified_file() -> str | None:
 def get_tables(relations: list[dict[str, list[str]]], filename: str) -> list:
     """Retrieves the tables associated with a given filename."""
 
-    tables: list = []
+    tables: set = set()
 
     for relation in relations:
         for index, file in enumerate(relation["files"]):
             if filename == file:
-                tables.append(relation["tables"][index])
+                tables.add(relation["tables"][index])
                 break
 
-    return tables
+    return list(tables)
 
 
 def filter_relations(filename: str) -> list[dict[str, any]]:

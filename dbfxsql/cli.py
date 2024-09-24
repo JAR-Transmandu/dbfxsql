@@ -272,10 +272,7 @@ def sync():
             sync_controller.init()
 
             spinner.text = "Listening..."
-            sync_controller.runner()
+            asyncio.run(sync_controller.listener())
 
         except KeyboardInterrupt:
             spinner.ok("END")
-
-        except Exception as error:
-            spinner.fail(f"ERROR: {error}")
