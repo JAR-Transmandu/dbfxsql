@@ -19,7 +19,8 @@ def main() -> None:
             spinner.text = "Initializing..."
             spinner.text = "Listening..."
 
-            asyncio.run(listener())
+            # asyncio.run(listener())
+            runner()
 
         except KeyboardInterrupt:
             spinner.ok("END")
@@ -35,31 +36,26 @@ async def listener() -> None:
 
 
 def runner() -> None:
-    filename: str = depurator()
-
-    if not filename or filename.endswith(".sql"):
+    # filename: str =
+    if not (filename := "usuarios.sql"):
         return
 
-    relations: list[dict[str, list[str]]] = formatters.filter_relations(filename)
-
-    if not relations:
+    if not (relations := formatters.filter_relations(filename)):
         return
 
-    origin = sync_queries.get_origin(relations, filename)
+    table = formatters.get_table(relations, filename)
+    records = sync_queries.read_records(filename, table)
 
     for relation in relations:
-        origin, destiny = sync_queries.parse_relation(relation, origin)
-
+        origin, destiny = sync_queries.parse_relation(
+            relation, [filename, table, records]
+        )
         operator(origin, destiny)
 
 
 def depurator() -> str:
-    changes: list[list[str]] = os.getenv("WATCHFILES_CHANGES")
-
-    if changes == "[]":
+    if not (changes := json.loads(os.getenv("WATCHFILES_CHANGES"))):
         return
-
-    changes = json.loads(changes)
 
     filepath: str = changes.pop()[-1]  # ignore the event, take the file name
     name, extension = file_manager.decompose_file(filepath)
@@ -78,21 +74,25 @@ def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
     origin["records"] = formatters.depurate_empty_tables(origin["records"])
     destiny["records"] = formatters.depurate_empty_tables(destiny["records"])
 
+    print(f"\nOrigin: {origin["records"]}\nDestiny: {destiny["records"]}\n")
+
     # update
     for origin_record in origin["records"]:
         for destiny_record in destiny["records"]:
             if origin_record["id"] == destiny_record["id"]:
                 comparator(origin, destiny, origin_record, destiny_record)
 
-            origin["records"].remove(origin_record)
-            destiny["records"].remove(destiny_record)
+                origin["records"].remove(origin_record)
+                destiny["records"].remove(destiny_record)
 
     # insert
     for origin_record in origin["records"]:
+        print(f"Insert: {origin_record}")
         sync_queries.insert_record(origin, destiny, origin_record)
 
     # delete
     for destiny_record in destiny["records"]:
+        print(f"Delete: {destiny_record}")
         sync_queries.delete_record(destiny, destiny_record)
 
 
@@ -106,6 +106,7 @@ def comparator(
             origin["fields"].remove("id")
             destiny["fields"].remove("id")
 
+            print(f"{origin_field} -> {destiny_field}")
             sync_queries.update_record(destiny, origin, origin_record)
 
             return

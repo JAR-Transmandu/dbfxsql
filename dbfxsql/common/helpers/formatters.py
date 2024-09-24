@@ -35,17 +35,15 @@ def parse_condition(condition: str) -> models.Filter:
         for parameter in parameters[3:]:
             parameters[2] += " " + parameter
 
-    filter: models.Filter = models.Filter(
-        field=parameters[0], operator=parameters[1], value=parameters[2]
-    )
+    # operator
+    if "=" == (parameters[1]):
+        parameters[1] += "="
 
-    if "=" == filter.operator:
-        filter.operator += "="
+    # value
+    if isinstance(parameters[2], str):
+        parameters[2] = f"'{parameters[2]}'"
 
-    if isinstance(filter.value, str):
-        filter.value = f"'{filter.value}'"
-
-    return filter
+    return models.Filter(*parameters)
 
 
 def filter_records(
@@ -62,8 +60,7 @@ def filter_records(
         if isinstance(record[filter.field], str):
             condition = f"'{record[filter.field]}'{condition}{filter.value}"
         else:
-            filter.value = filter.value.strip("'")
-            condition = f"{record[filter.field]}{condition}{filter.value}"
+            condition = f"{record[filter.field]}{condition}{filter.value.strip("'")}"
 
         if eval(condition):
             records.append(record)

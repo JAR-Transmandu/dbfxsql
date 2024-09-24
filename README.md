@@ -43,6 +43,7 @@ This project aims to synchronize data between [DBF](https://en.wikipedia.org/wik
 - [x] Change detection in folders/files
 - [x] Make a video to explain the project
 - [x] Use config file to delimiter databases/tables/fields
+- [ ] Auto create a DB in the create command for SQL
 - [ ] Replace dictionaries with classes during the sync
 - [ ] Force a sync between SQL and DBF (read all tables)
 - [ ] Move from Sqlite to MSQL server

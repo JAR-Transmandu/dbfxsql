@@ -72,7 +72,7 @@ if __name__ == "__main__":
     test_add_fields("users", "id N(20,0); address C(20)", increment="True")
     test_read_all("users")
 
-    test_read_with_condition("users", "name == 'j4breu'")
+    test_read_with_condition("users", "name == j4breu")
 
     test_update("users", "name, password", "JAR, idk", "id == 2")
     test_read_all("users")

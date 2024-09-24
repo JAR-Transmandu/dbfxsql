@@ -68,7 +68,7 @@ if __name__ == "__main__":
         test_insert(*parameter)
     test_read_all("users", "users")
 
-    test_read_with_condition("users", "users", "name == 'j4breu'")
+    test_read_with_condition("users", "users", "name == j4breu")
 
     test_update("users", "users", "name, password", "JAR, idk", "id == 2")
     test_read_all("users", "users")

@@ -5,7 +5,7 @@ from functools import cached_property
 from watchfiles import Change, DefaultFilter
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Filter:
     field: str
     operator: str
@@ -15,6 +15,7 @@ class Filter:
         return f"{self.field} {self.operator} {self.value}"
 
 
+@dataclass
 class Watcher(DefaultFilter):
     allowed_extensions: tuple[str] = (".dbf", ".sql")
 
