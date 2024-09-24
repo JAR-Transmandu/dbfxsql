@@ -44,7 +44,7 @@ class OrderCommands(click.Group):
 
 class LazyGroup(click.Group):
     """
-    A resilient subcommand that dynamically imports its implementation
+    A resilient group that dynamically imports its subcommand implementation
     when needed. Ensures the CLI doesn't fail due to broken subcommands
     during startup.
     """
