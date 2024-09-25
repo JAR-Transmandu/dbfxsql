@@ -97,7 +97,18 @@ def depurate_empty_records(records: list[dict]) -> list:
     return records
 
 
-def get_modified_file() -> str | None:
+def values_are_different(records: list[dict], record: dict) -> bool:
+    """Checks if a list of records are different from a given record."""
+
+    for _record in records:
+        for key, value in record.items():
+            if value != _record[key]:
+                return True
+
+    return False
+
+
+def get_modified_files() -> str | None:
     """Retrieves the modified file from the environment variables."""
 
     changes: list[list[str, str]] = json.loads(os.getenv("WATCHFILES_CHANGES"))
@@ -105,34 +116,35 @@ def get_modified_file() -> str | None:
     if not changes:
         return
 
-    filepath: str = changes[0][-1]  # ignore the event, take the filepath
-    name, extension = file_manager.decompose_filename(filepath)
+    filenames: list = []
 
-    filename: str = f"{name}.{extension}"
+    for change in changes:
+        filepath: str = change[-1]
+        name, extension = file_manager.decompose_filename(filepath)
+        filenames.append(f"{name}.{extension}")
 
-    return filename
-
-
-def get_tables(relations: list[dict[str, list[str]]], filename: str) -> list:
-    """Retrieves the tables associated with a given filename."""
-
-    tables: set = set()
-
-    for relation in relations:
-        for index, file in enumerate(relation["files"]):
-            if filename == file:
-                tables.add(relation["tables"][index])
-                break
-
-    return list(tables)
+    return filenames
 
 
-def filter_relations(filename: str) -> list[dict[str, any]]:
-    """Filters relations based on a given filename."""
+def get_relations(modified_files: list[str]) -> list:
+    relation_group: list = []
 
-    relations: list[dict] = file_manager.load_toml()["relations"]
+    for modified_file in modified_files:
+        if relations := __filter_relations(modified_file):
+            relation_group.append(relations)
 
-    return [relation for relation in relations if filename in relation["files"]]
+    return relation_group
+
+
+def get_tables(relations: list[list[dict]], filenames: list[str]) -> list:
+    tables: list = []
+
+    for _relations, filename in zip(relations, filenames):
+        tables.append(__filter_tables(_relations, filename))
+
+    # remove empty list in the tables list
+
+    return tables
 
 
 def __record_asdict(fields: str, values: str) -> dict[str, str]:
@@ -162,3 +174,25 @@ def __assign_type(field, value: str, _type: str) -> any:
 
     except (ValueError, AttributeError, decimal.InvalidOperation):
         raise exceptions.ValueNotValid(value, field, _type)
+
+
+def __filter_relations(filename: str) -> list[dict[str, any]]:
+    """Filters relations based on a given filename."""
+
+    relations: list[dict] = file_manager.load_toml()["relations"]
+
+    return [relation for relation in relations if filename in relation["files"]]
+
+
+def __filter_tables(relations: list[dict], filename: str) -> list[dict[str, any]]:
+    """Filters tables based on a given filename and relations."""
+
+    tables: set = set()
+
+    for relation in relations:
+        for index, file in enumerate(relation["files"]):
+            if filename == file:
+                tables.add(relation["tables"][index])
+                break
+
+    return list(tables)

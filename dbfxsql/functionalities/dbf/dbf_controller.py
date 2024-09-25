@@ -109,15 +109,16 @@ def update_records(table: str, fields: str, values: str, condition: str) -> None
     filter: models.Filter = formatters.parse_condition(condition)
 
     if "id" == filter.field:
-        _, indexes = formatters.filter_records(records, filter, limit=1)
+        records, indexes = formatters.filter_records(records, filter, limit=1)
     else:
-        _, indexes = formatters.filter_records(records, filter)
+        records, indexes = formatters.filter_records(records, filter)
 
     if not indexes:
         raise exceptions.RecordNotFound(condition)
 
     # update filtered records by their index
-    dbf_queries.update(filepath, record, indexes)
+    if formatters.values_are_different(records, record):
+        dbf_queries.update(filepath, record, indexes)
 
 
 def delete_records(table: str, condition: str) -> None:

@@ -61,12 +61,10 @@ def operator(origin: dict[str, any], destiny: dict[str, any]) -> None:
 
     # insert residual origin records
     for origin_record in residual_origin:
-        print(f"Insert in {destiny["file"]}: {origin_record}")
         sync_connection.insert_record(origin, destiny, origin_record)
 
     # delete residual destiny records
     for destiny_record in residual_destiny:
-        print(f"Delete in {destiny["file"]}: {destiny_record}")
         sync_connection.delete_record(destiny, destiny_record)
 
 

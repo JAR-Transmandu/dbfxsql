@@ -78,6 +78,8 @@ This early version of the code demonstrates a basic interaction with the tool.
       <li>[x] Retrieving database folder paths from a `.env` file.</li>
       <li>[x] Creating a project explainer video.</li>
       <li>[x] Configuring database/table/field delimiters via a config file.</li>
+      <li>[ ] Don't update a DBF record if it hasn't changed.</li>
+      <li>[ ] Get the records of all relationships in the config file.</li>
       <li>[ ] Automatic SQL database creation during SQL table creation.</li>
       <li>[ ] Replace dictionaries with classes during synchronization.</li>
       <li>[ ] Force SQL -> DBF "synchronization" (read all tables).</li>

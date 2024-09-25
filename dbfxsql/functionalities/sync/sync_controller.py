@@ -27,16 +27,38 @@ def runner() -> None:
     """Runs the synchronization process."""
 
     # get the modified file
-    modified_file: str = formatters.get_modified_file()
-    if not modified_file:
+    modified_files: list = formatters.get_modified_files()
+    if not modified_files:
         return
 
-    print(f"File modified: {modified_file}")
+    relevant_data: list[dict, ...] = formatters.parse_by_relations(modified_files)
+    if not relations_group:
+        return
+
+    relevant_data: list = []
+    for files in modified_files:
+
+
+
+    # get origin
+
+    for data in relevant_data:
+        print(data)
+
+
+def foo() -> None:
+    """Runs the synchronization process."""
+
+    # get the modified file
+    modified_files: list = formatters.get_modified_files()
+    if not modified_files:
+        return
 
     # get the relations from the modified file
-    relations: list[dict] = formatters.filter_relations(modified_file)
-    if not relations:
-        return
+    for file in modified_files:
+        relations: list[dict] = formatters.filter_relations(file)
+        if not relations:
+            return
 
     modified_tables: list[str] = formatters.get_tables(relations, modified_file)
 
