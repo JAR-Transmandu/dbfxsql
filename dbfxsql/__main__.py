@@ -1,4 +1,4 @@
-"""Alternative way to start the application, with: python -m dbfxsql"""
+"""Alterative entry point for dbfxsql."""
 
 from . import run
 

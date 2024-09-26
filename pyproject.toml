@@ -17,7 +17,9 @@ python-dotenv = "1.0.1"
 watchfiles = "0.24.0"
 yaspin = "3.0.2"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+dbfxsql = "dbfxsql:run"

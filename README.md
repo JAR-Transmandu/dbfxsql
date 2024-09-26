@@ -9,36 +9,64 @@ A tool that enables bi-directional data synchronization between [DBF](https://en
 
 ### 🔌 Installation
 
-1. Clone he repository:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/j4breu/dbfxsql.git
 ```
 
-2. Change to the project directory:
-
-```bash
-cd dbfxsql
-```
-
-3. Install Poetry (if not alredy installed)
+2. Install Poetry (if not alredy installed)
 
 ```bash
 pip install poetry
 ```
 
-4. Install project dependencies:
+3. Set up the environment:
 
 ```bash
+cd dbfxsql
+poetry shell
 poetry install
 ```
 
-5. Run the application:
+4. Fullfill the environment variables:
 
 ```bash
-poetry run python run.py
+cp .env.example .env
+vim .env
 ```
 
+5. Run the tool:
+
+```bash
+python run.py # python -m dbfxsql
+```
+
+<details>
+  <summary><strong>As a library:</strong></summary>
+  <br>
+  <ol>
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/j4breu/dbfxsql.git
+```
+
+2. Install the project as a Python library:
+
+```bash
+cd dbfxsql
+pip install .
+````
+
+3. Run the tool:
+
+```bash
+dbfxsql
+```
+  </ol>
+</details>
 &nbsp;
 
 ### 💻 Usage
@@ -62,7 +90,7 @@ This early version of the code demonstrates a basic interaction with the tool.
 - [x] Bi-directional data transfer between DBF and SQL.
 - [x] Command-Line Interface (CLI) for managing DBF and SQL tasks.
 - [x] Detecting changes in folders.
-- [ ] Compare records to sync specific fields
+- [x] Compare records to sync specific fields
 - [x] Set up a cron job to sync data
 
 <details>
@@ -78,11 +106,12 @@ This early version of the code demonstrates a basic interaction with the tool.
       <li>[x] Retrieving database folder paths from a `.env` file.</li>
       <li>[x] Creating a project explainer video.</li>
       <li>[x] Configuring database/table/field delimiters via a config file.</li>
-      <li>[ ] Don't update a DBF record if it hasn't changed.</li>
-      <li>[ ] Get the records of all relationships in the config file.</li>
+      <li>[x] Don't update a DBF record if it hasn't changed.</li>
+      <li>[x] Get the records of all relationships in the config file.</li>
+      <li>[x] Force SQL -> DBF "synchronization" (read all tables).</li>
+      <li>[ ] Add listen and compare commands.</li>
       <li>[ ] Automatic SQL database creation during SQL table creation.</li>
       <li>[ ] Replace dictionaries with classes during synchronization.</li>
-      <li>[ ] Force SQL -> DBF "synchronization" (read all tables).</li>
       <li>[ ] Support for other database systems beyond SQLite. (MSQL Server).</li>
       <li>[ ] Implement BEFORE triggers for SQL table changes.</li>
       <li>[ ] Allow setting folder paths via CLI commands.</li>
@@ -90,7 +119,7 @@ This early version of the code demonstrates a basic interaction with the tool.
       <li>[ ] Validate the existence of fields in the DBF.</li>
       <li>[ ] Separate incremental logic from the "add" feature.</li>
       <li>[ ] Add LIMIT and FIELDS options for filtering queries.</li>
-      <li>[ ] Perform table synchronization before initial data migration.</li>
+      <li>[ ] Perform table migration before initial data synchronization.</li>
       <li>[ ] Generate logs for exceptions and errors.</li>
       <li>[ ] Standardize input by file and tables.</li>
       <li>[ ] Validate KeyErrors for invalid fields.</li>

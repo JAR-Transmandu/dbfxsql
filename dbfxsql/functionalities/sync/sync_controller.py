@@ -32,18 +32,15 @@ def runner() -> None:
         return
 
     relevant_data: list[dict, ...] = formatters.parse_by_relations(modified_files)
-    if not relations_group:
+    if not relevant_data:
         return
 
     relevant_data: list = []
     for files in modified_files:
+        # get origin
 
-
-
-    # get origin
-
-    for data in relevant_data:
-        print(data)
+        for data in relevant_data:
+            print(data)
 
 
 def foo() -> None:
