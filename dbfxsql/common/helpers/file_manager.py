@@ -38,7 +38,7 @@ def load_toml() -> dict:
     filepath: Path = Path(config("CONFIG_FOLDERPATH")) / "config.toml"
 
     if not filepath.exists():
-        filepath.touch()
+        raise FileNotFoundError("Config file not found.")
 
     with open(filepath, "rb") as file:
         toml_data: dict = tomllib.load(file)

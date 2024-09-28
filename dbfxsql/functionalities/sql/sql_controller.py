@@ -53,7 +53,7 @@ def insert_record(db: str, table: str, fields: str, values: str) -> None:
     if "id" in fields:
         filter: models.Filter = formatters.parse_condition(f"id == {record['id']}")
 
-        if __record_exists(filepath, table, filter):
+        if _record_exists(filepath, table, filter):
             raise exceptions.RecordAlreadyExists(record["id"])
 
     sql_queries.insert(filepath, table, record)
@@ -69,7 +69,7 @@ def read_records(
     if condition:
         filter: models.Filter = formatters.parse_condition(condition)
 
-        if not __record_exists(filepath, table, filter):
+        if not _record_exists(filepath, table, filter):
             raise exceptions.RecordNotFound(condition)
 
         records: list[dict[str, any]] = sql_queries.read(filepath, table, filter)
@@ -93,13 +93,13 @@ def update_records(
     if "id" in fields:
         filter: models.Filter = formatters.parse_condition(f"id == {record['id']}")
 
-        if __record_exists(filepath, table, filter):
+        if _record_exists(filepath, table, filter):
             raise exceptions.RecordAlreadyExists(record["id"])
 
     # check if this record exists
     filter: models.Filter = formatters.parse_condition(condition)
 
-    if not __record_exists(filepath, table, filter):
+    if not _record_exists(filepath, table, filter):
         raise exceptions.RecordNotFound(condition)
 
     sql_queries.update(filepath, table, record, filter)
@@ -112,13 +112,13 @@ def delete_records(db: str, table: str, condition: str) -> None:
 
     filter: models.Filter = formatters.parse_condition(condition)
 
-    if not __record_exists(filepath, table, filter):
+    if not _record_exists(filepath, table, filter):
         raise exceptions.RecordNotFound(condition)
 
     sql_queries.delete(filepath, table, filter)
 
 
-def __record_exists(filepath: str, table: str, filter: models.Filter) -> bool:
+def _record_exists(filepath: str, table: str, filter: models.Filter) -> bool:
     records: list[dict[str, any]] = sql_queries.read(filepath, table, filter)
 
     return bool(formatters.depurate_empty_records(records))

@@ -57,7 +57,7 @@ def insert_record(table: str, fields: str, values: str) -> None:
         records: list[dict[str, any]] = dbf_queries.read(filepath)
         records = formatters.format_output(records)
 
-        if __record_exists(records, record):
+        if _record_exists(records, record):
             raise exceptions.RecordAlreadyExists(record["id"])
 
     dbf_queries.insert(filepath, record)
@@ -102,7 +102,7 @@ def update_records(table: str, fields: str, values: str, condition: str) -> None
     records = formatters.format_output(records)
 
     # check if other record have the same id
-    if "id" in fields and __record_exists(records, record):
+    if "id" in fields and _record_exists(records, record):
         raise exceptions.RecordAlreadyExists(record["id"])
 
     # manual filter of records by condition
@@ -117,7 +117,7 @@ def update_records(table: str, fields: str, values: str, condition: str) -> None
         raise exceptions.RecordNotFound(condition)
 
     # update filtered records by their index
-    if formatters.values_are_different(records, record):
+    if _values_are_different(records, record):
         dbf_queries.update(filepath, record, indexes)
 
 
@@ -145,10 +145,21 @@ def delete_records(table: str, condition: str) -> None:
     dbf_queries.delete(filepath, indexes)
 
 
-def __record_exists(records: list[dict[str, any]], record: dict[str, any]) -> bool:
+def _record_exists(records: list[dict[str, any]], record: dict[str, any]) -> bool:
     condition = f"id == {record['id']}"
     filter: models.Filter = formatters.parse_condition(condition)
 
     record, _ = formatters.filter_records(records, filter, limit=1)
 
     return bool(record)
+
+
+def _values_are_different(records: list[dict], record: dict) -> bool:
+    """Checks if a list of records are different from a given record."""
+
+    for _record in records:
+        for key, value in record.items():
+            if value != _record[key]:
+                return True
+
+    return False

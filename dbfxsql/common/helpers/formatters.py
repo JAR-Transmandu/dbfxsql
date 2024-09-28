@@ -1,5 +1,3 @@
-import os
-import json
 import decimal
 from . import file_manager
 from ..entities import constants, models, exceptions
@@ -8,10 +6,10 @@ from ..entities import constants, models, exceptions
 def format_input(fields: str, values: str, types: list[str]) -> dict[str, any]:
     """Formats input data into a dictionary."""
 
-    record: dict[str, any] = __record_asdict(fields, values)
+    record: dict[str, any] = _record_asdict(fields, values)
 
     for field, value, _type in zip(record.keys(), record.values(), types):
-        record[field] = __assign_type(field, value, _type)
+        record[field] = _assign_type(field, value, _type)
 
     return record
 
@@ -97,24 +95,8 @@ def depurate_empty_records(records: list[dict]) -> list:
     return records
 
 
-def values_are_different(records: list[dict], record: dict) -> bool:
-    """Checks if a list of records are different from a given record."""
-
-    for _record in records:
-        for key, value in record.items():
-            if value != _record[key]:
-                return True
-
-    return False
-
-
-def get_modified_files() -> str | None:
+def parse_filepaths(changes: list[set]) -> list:
     """Retrieves the modified file from the environment variables."""
-
-    changes: list[list[str, str]] = json.loads(os.getenv("WATCHFILES_CHANGES"))
-
-    if not changes:
-        return
 
     filenames: list = []
 
@@ -130,7 +112,7 @@ def get_relations(modified_files: list[str]) -> list:
     relation_group: list = []
 
     for modified_file in modified_files:
-        if relations := __filter_relations(modified_file):
+        if relations := _filter_relations(modified_file):
             relation_group.append(relations)
 
     return relation_group
@@ -140,14 +122,14 @@ def get_tables(relations: list[list[dict]], filenames: list[str]) -> list:
     tables: list = []
 
     for _relations, filename in zip(relations, filenames):
-        tables.append(__filter_tables(_relations, filename))
+        tables.append(_filter_tables(_relations, filename))
 
     # remove empty list in the tables list
 
     return tables
 
 
-def __record_asdict(fields: str, values: str) -> dict[str, str]:
+def _record_asdict(fields: str, values: str) -> dict[str, str]:
     """Creates a dictionary from a list of fields and values."""
 
     fields_list = fields.lower().replace(" ", "").split(",")
@@ -156,7 +138,7 @@ def __record_asdict(fields: str, values: str) -> dict[str, str]:
     return dict(zip(fields_list, values_list))
 
 
-def __assign_type(field, value: str, _type: str) -> any:
+def _assign_type(field, value: str, _type: str) -> any:
     """Assigns the appropriate type to a value based on its field and type."""
 
     try:
@@ -176,7 +158,7 @@ def __assign_type(field, value: str, _type: str) -> any:
         raise exceptions.ValueNotValid(value, field, _type)
 
 
-def __filter_relations(filename: str) -> list[dict[str, any]]:
+def _filter_relations(filename: str) -> list[dict[str, any]]:
     """Filters relations based on a given filename."""
 
     relations: list[dict] = file_manager.load_toml()["relations"]
@@ -184,7 +166,7 @@ def __filter_relations(filename: str) -> list[dict[str, any]]:
     return [relation for relation in relations if filename in relation["files"]]
 
 
-def __filter_tables(relations: list[dict], filename: str) -> list[dict[str, any]]:
+def _filter_tables(relations: list[dict], filename: str) -> list[dict[str, any]]:
     """Filters tables based on a given filename and relations."""
 
     tables: set = set()

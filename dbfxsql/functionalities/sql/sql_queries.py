@@ -5,7 +5,7 @@ from dbfxsql.common import models, exceptions
 
 
 def create(filepath: str, table: str, fields: str) -> None:
-    if __table_exists(filepath, table):
+    if _table_exists(filepath, table):
         raise exceptions.TableAlreadyExists(table)
 
     query: str = f"CREATE TABLE IF NOT EXISTS {table} ({fields})"
@@ -13,7 +13,7 @@ def create(filepath: str, table: str, fields: str) -> None:
 
 
 def drop(filepath: str, table: str) -> None:
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     query: str = f"DROP TABLE IF EXISTS {table}"
@@ -23,7 +23,7 @@ def drop(filepath: str, table: str) -> None:
 def count(filepath: str, table: str) -> int:
     """Counts the number of records in a SQL table."""
 
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     query: str = f"SELECT COUNT(1) FROM {table}"
@@ -31,7 +31,7 @@ def count(filepath: str, table: str) -> int:
 
 
 def insert(filepath: str, table: str, record: dict[str, any]) -> None:
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     # [key] -> [:key]
@@ -45,7 +45,7 @@ def insert(filepath: str, table: str, record: dict[str, any]) -> None:
 
 
 def read(filepath: str, table: str, filter: models.Filter | None = None) -> list[dict]:
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     query: str = f"SELECT * FROM {table}"
@@ -60,7 +60,7 @@ def read(filepath: str, table: str, filter: models.Filter | None = None) -> list
 
 
 def update(filepath: str, table: str, record: dict, filter: models.Filter) -> None:
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     # [key] -> [key = :key]
@@ -73,7 +73,7 @@ def update(filepath: str, table: str, record: dict, filter: models.Filter) -> No
 
 
 def delete(filepath: str, table: str, filter: models.Filter) -> None:
-    if not __table_exists(filepath, table):
+    if not _table_exists(filepath, table):
         raise exceptions.TableNotFound(table)
 
     query: str = f"DELETE FROM {table} WHERE {filter}"
@@ -106,7 +106,7 @@ def fetch_types(filepath: str, table: str, fields: str) -> list[dict[str, str]]:
     return types
 
 
-def __table_exists(filepath: str, table: str) -> bool:
+def _table_exists(filepath: str, table: str) -> bool:
     query = f"SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name='{table}'"
 
     return bool(sql_connection.fetch_one(filepath, query)[0]["COUNT(1)"])

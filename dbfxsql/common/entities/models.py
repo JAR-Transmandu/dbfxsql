@@ -2,7 +2,14 @@ import click
 from dataclasses import dataclass
 from importlib import import_module
 from functools import cached_property
-from watchfiles import Change, DefaultFilter
+
+
+@dataclass(frozen=True, slots=True)
+class Actor:
+    file: str
+    table: str
+    fields: list[str]
+    records: list[dict[str, any]]
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,27 +22,6 @@ class Filter:
 
     def __str__(self) -> str:
         return f"{self.field} {self.operator} {self.value}"
-
-
-@dataclass
-class Watcher(DefaultFilter):
-    """Tracks file changes based on allowed extensions."""
-
-    allowed_extensions: tuple[str] = (".dbf", ".sql")
-    ignored_dirs: tuple[str] = ("__pycache__",)  # Your custom ignored directories
-
-    def __init__(self):
-        super().__init__()  # Call the base class constructor
-        self.ignore_dirs = set(self.ignored_dirs)
-
-    def __call__(self, change: Change, path: str) -> bool:
-        """Filters file changes based on modification and extensions."""
-
-        return (
-            super().__call__(change, path)
-            and change == Change.modified
-            and path.endswith(self.allowed_extensions)
-        )
 
 
 class OrderCommands(click.Group):

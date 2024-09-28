@@ -258,6 +258,11 @@ def delete(database: str | None, table: str, condition: tuple[str, str, str]):
 
 
 @cli.command()
+def migrate():
+    raise NotImplementedError()
+
+
+@cli.command()
 def sync():
     """
     Synchronize data between DBF and SQL databases.
@@ -265,14 +270,13 @@ def sync():
     This read a config.toml file with the necessary information to sync data
     between DBF and SQL databases.
     """
-
     with yaspin(color="cyan", timer=True) as spinner:
         try:
             spinner.text = "Initializing..."
-            sync_controller.init()
+            config: list[list[dict]] = sync_controller.init()
 
             spinner.text = "Listening..."
-            asyncio.run(sync_controller.listener())
+            asyncio.run(sync_controller.synchronize(config))
 
         except KeyboardInterrupt:
             spinner.ok("END")

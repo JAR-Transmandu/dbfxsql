@@ -8,7 +8,7 @@ from contextlib import contextmanager
 def fetch_all(filepath: str, query: str) -> list[dict[str, any]]:
     """Executes a query returning all rows in the found set"""
 
-    with __get_cursor(filepath) as cursor:
+    with _get_cursor(filepath) as cursor:
         cursor.execute(query)
 
         # Save field names in a list
@@ -22,7 +22,7 @@ def fetch_all(filepath: str, query: str) -> list[dict[str, any]]:
 def fetch_one(filepath: str, query: str) -> list[dict[str, any]] | None:
     """Executes a query and returns the first row as a dictionary (or None)."""
 
-    with __get_cursor(filepath) as cursor:
+    with _get_cursor(filepath) as cursor:
         cursor.execute(query)
 
         # Save field names in a list
@@ -38,12 +38,12 @@ def fetch_none(
 ) -> None:
     """Executes a query that doesn't return values."""
 
-    with __get_cursor(filepath) as cursor:
+    with _get_cursor(filepath) as cursor:
         cursor.execute(query, parameters) if parameters else cursor.execute(query)
 
 
 @contextmanager
-def __get_cursor(filepath: str) -> Generator[sqlite3.Cursor]:
+def _get_cursor(filepath: str) -> Generator[sqlite3.Cursor]:
     """Provides a context manager for establishing and closing a database connection."""
 
     connection: sqlite3.Connection = sqlite3.connect(filepath)
