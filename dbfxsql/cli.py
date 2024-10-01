@@ -273,10 +273,10 @@ def sync():
     with yaspin(color="cyan", timer=True) as spinner:
         try:
             spinner.text = "Initializing..."
-            config: list[list[dict]] = sync_controller.init()
+            setup: list[list[dict]] = sync_controller.init()
 
             spinner.text = "Listening..."
-            asyncio.run(sync_controller.synchronize(config))
+            asyncio.run(sync_controller.synchronize(setup))
 
         except KeyboardInterrupt:
             spinner.ok("END")

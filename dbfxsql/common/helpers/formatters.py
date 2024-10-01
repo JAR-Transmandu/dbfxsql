@@ -108,25 +108,10 @@ def parse_filepaths(changes: list[set]) -> list:
     return filenames
 
 
-def get_relations(modified_files: list[str]) -> list:
-    relation_group: list = []
+def package_fields(origin: models.Actor, destiny: models.Actor) -> tuple[str, str]:
+    """Returns a tuple of fields to be compared."""
 
-    for modified_file in modified_files:
-        if relations := _filter_relations(modified_file):
-            relation_group.append(relations)
-
-    return relation_group
-
-
-def get_tables(relations: list[list[dict]], filenames: list[str]) -> list:
-    tables: list = []
-
-    for _relations, filename in zip(relations, filenames):
-        tables.append(_filter_tables(_relations, filename))
-
-    # remove empty list in the tables list
-
-    return tables
+    return zip(origin.fields[0].split(", "), destiny.fields[0].split(", "))
 
 
 def _record_asdict(fields: str, values: str) -> dict[str, str]:
@@ -156,25 +141,3 @@ def _assign_type(field, value: str, _type: str) -> any:
 
     except (ValueError, AttributeError, decimal.InvalidOperation):
         raise exceptions.ValueNotValid(value, field, _type)
-
-
-def _filter_relations(filename: str) -> list[dict[str, any]]:
-    """Filters relations based on a given filename."""
-
-    relations: list[dict] = file_manager.load_toml()["relations"]
-
-    return [relation for relation in relations if filename in relation["files"]]
-
-
-def _filter_tables(relations: list[dict], filename: str) -> list[dict[str, any]]:
-    """Filters tables based on a given filename and relations."""
-
-    tables: set = set()
-
-    for relation in relations:
-        for index, file in enumerate(relation["files"]):
-            if filename == file:
-                tables.add(relation["tables"][index])
-                break
-
-    return list(tables)
