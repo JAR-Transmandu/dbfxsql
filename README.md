@@ -109,6 +109,9 @@ This early version of the code demonstrates a basic interaction with the tool.
       <li>[x] Don't update a DBF record if it hasn't changed.</li>
       <li>[x] Get the records of all relationships in the config file.</li>
       <li>[x] Force SQL -> DBF "synchronization" (read all tables).</li>
+      <li>[ ] Optimize Insert/Delete queries using Update queries.</li>
+      <li>[ ] Suppress id in fields if their value it's the same in condition.</li>
+      <li>[ ] Use a decorator for the listening command.</li>
       <li>[ ] Add listen and compare commands.</li>
       <li>[ ] Automatic SQL database creation during SQL table creation.</li>
       <li>[ ] Replace dictionaries with classes during synchronization.</li>
@@ -151,4 +154,4 @@ This early version of the code demonstrates a basic interaction with the tool.
 
 Special thanks to the following project for making this tool possible:
 
-- [ethanfurman/dbf](https://github.com/ethanfurman/dbf): pure python dbf reader/writer
+- [dbf Python library](https://github.com/ethanfurman/dbf/tree/master/dbf): Pure Python DBF reader/writer by [Ethan Furman](https://github.com/ethanfurman)

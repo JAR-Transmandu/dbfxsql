@@ -29,3 +29,16 @@ def clone_actor(actor: models.Actor, index: int) -> models.Actor:
         fields=[actor.fields[index]],
         records=actor.records[:],
     )
+
+
+def notify(insert: list, update: list, delete: list, header: dict) -> None:
+    for record in insert:
+        print(f"Insert in table '{header['table']}': {record}")
+
+    for record in update:
+        print(
+            f"Update in table '{header['table']}' on fields '{header['destiny_fields']}' with record: {record}"
+        )
+
+    for record in delete:
+        print(f"Delete in table '{header['table']}' with id: {record['id']}")

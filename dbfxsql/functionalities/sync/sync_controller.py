@@ -26,13 +26,15 @@ async def synchronize(setup: list[list[dict]]) -> None:
             print(origin.file)
 
             for index, destiny in enumerate(change["destinies"]):
-                # copy with only the correspond fields
+                # copy with only the correspond fie
                 _origin: models.Actor = utils.clone_actor(origin, index)
 
                 insert, update, delete = sync_services.classify(_origin, destiny)
 
                 # data to know where do the changes
                 header: dict = _parse_header(_origin, destiny)
+
+                utils.notify(insert, update, delete, header)
 
                 sync_services.operate(insert, update, delete, header)
 

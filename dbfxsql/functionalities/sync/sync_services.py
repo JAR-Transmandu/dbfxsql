@@ -33,14 +33,17 @@ def relevant_changes(filenames: list[str], relations: list[dict]) -> list[dict]:
 def classify(origin: models.Actor, destiny: models.Actor) -> tuple[list, list, list]:
     """Classifies changes into insert, update and delete operations."""
 
-    insert: list = origin.records[:]  # a copy
+    origin_records: list = formatters.depurate_empty_records(origin.records)
+    destiny_records: list = formatters.depurate_empty_records(destiny.records)
+
+    insert: list = origin_records[:]
     update: list = []
-    delete: list = destiny.records[:]  # a copy
+    delete: list = destiny_records[:]
 
     fields: tuple = formatters.package_fields(origin, destiny)
 
-    for origin_record in formatters.depurate_empty_records(origin.records):
-        for destiny_record in formatters.depurate_empty_records(destiny.records):
+    for origin_record in origin_records:
+        for destiny_record in destiny_records:
             if origin_record["id"] == destiny_record["id"]:
                 if change := _comparator(origin_record, destiny_record, fields):
                     update.append(change)
@@ -61,12 +64,12 @@ def operate(insert: list, update: list, delete: list, header: dict) -> None:
             ", ".join(f"{record[field]}" for field in header["origin_fields"]),
         )
 
-    for record in update:
-        # avoid RecordAlreadyExists error
-        header["origin_fields"].remove("id")
-        header["destiny_fields"] = header["destiny_fields"].split(", ")
-        header["destiny_fields"].remove("id")
+    # avoid RecordAlreadyExists error
+    header["origin_fields"].remove("id")
+    header["destiny_fields"] = header["destiny_fields"].split(", ")
+    header["destiny_fields"].remove("id")
 
+    for record in update:
         sync_connection.update(
             header["file"],
             header["table"],
